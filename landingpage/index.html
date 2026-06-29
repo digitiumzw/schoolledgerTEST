@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Ledger — School Management, Simplified</title>
+<meta name="description" content="School Ledger simplifies school administration. Manage students, fees, attendance, and staff from one powerful platform.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<script>
+tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d6196'},secondary:'#2d6196',accent:{DEFAULT:'#34663f',light:'#4a8a55',dark:'#245229'},navy:{50:'#eef2f7',100:'#d6dfe9',200:'#b9c7d8',300:'#96aac4',400:'#6b83a6',500:'#4f6788',600:'#3d536e',700:'#304258',800:'#1a4770',900:'#14365a'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(52,102,63,.4)}50%{box-shadow:0 0 0 12px rgba(52,102,63,0)}}
+.animate-fade-up{animation:fadeInUp .7s ease-out forwards;opacity:0}
+.animate-float{animation:float 6s ease-in-out infinite}
+.animate-pulse-glow{animation:pulseGlow 2s infinite}
+.delay-100{animation-delay:.1s}.delay-200{animation-delay:.2s}.delay-300{animation-delay:.3s}.delay-400{animation-delay:.4s}
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s ease-out}.reveal.active{opacity:1;transform:translateY(0)}
+.gradient-text{background:linear-gradient(135deg,#34663f,#2d6196);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dashboard-mockup{background:linear-gradient(135deg,#1a4770,#2d6196);border-radius:12px;box-shadow:0 25px 50px -12px rgba(26,71,112,.4)}
+.nav-scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(26,71,112,.1)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s ease}.faq-answer.open{max-height:300px;padding-top:12px}
+.btn-primary{background:linear-gradient(135deg,#34663f,#245229);transition:all .3s ease}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(52,102,63,.4)}
+.btn-secondary{border:2px solid #34663f;color:#34663f;transition:all .3s ease}
+.btn-secondary:hover{background:#34663f;color:#fff;transform:translateY(-2px)}
+.feature-card{transition:all .3s ease}.feature-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -12px rgba(26,71,112,.15)}
+.stat-card{transition:all .3s ease}.stat-card:hover{transform:scale(1.05)}
+.input-error{border-color:#ef4444!important}
+.error-msg{display:none;color:#ef4444;font-size:.75rem;margin-top:4px}
+.input-error~.error-msg{display:block}
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}
+</style>
+</head>
+<body class="bg-white text-navy-900 antialiased">
+
+<!-- Toast -->
+<div id="toast" class="toast bg-accent text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+<svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+<span class="font-medium">Demo request submitted successfully!</span>
+</div>
+
+<!-- Nav -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 lg:h-20">
+<a href="#" class="flex items-center gap-2">
+<img src="assets/logo.png" alt="School Ledger" class="w-9 h-9 object-contain">
+<span class="text-lg font-bold text-primary">School Ledger</span>
+</a>
+<div class="hidden lg:flex items-center gap-8">
+<a href="#features" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Features</a>
+<a href="#benefits" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Benefits</a>
+<a href="#how-it-works" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">How It Works</a>
+<a href="#testimonials" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Testimonials</a>
+<a href="#faq" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">FAQ</a>
+</div>
+<div class="hidden lg:flex items-center gap-4">
+<a href="http://localhost:8081" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors border border-navy-200 px-5 py-2.5 rounded-lg hover:border-accent">Sign In</a>
+<a href="#demo" class="btn-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold">Book a Demo</a>
+</div>
+<button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-navy-50 transition-colors">
+<svg class="w-6 h-6 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+</div>
+</div>
+<div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-navy-100 shadow-lg">
+<div class="px-4 py-4 space-y-3">
+<a href="#features" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Features</a>
+<a href="#benefits" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Benefits</a>
+<a href="#how-it-works" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">How It Works</a>
+<a href="#testimonials" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Testimonials</a>
+<a href="#faq" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">FAQ</a>
+<a href="http://localhost:8081" class="block text-center text-sm font-medium text-navy-700 hover:text-accent border border-navy-200 px-6 py-3 rounded-lg mt-2">Sign In</a>
+<a href="#demo" class="block btn-primary text-white text-center px-6 py-3 rounded-lg text-sm font-semibold mt-2">Book a Demo</a>
+</div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="relative overflow-hidden pt-24 lg:pt-32 pb-16 lg:pb-24">
+<div class="absolute inset-0 bg-gradient-to-br from-navy-50 via-white to-accent/5"></div>
+<div class="absolute -top-40 -right-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+<!-- Baobab Tree Decorative SVG -->
+<div class="absolute bottom-0 right-0 opacity-[0.04] pointer-events-none hidden lg:block">
+<svg width="280" height="340" viewBox="0 0 280 340" fill="currentColor" class="text-primary">
+<path d="M140 40c-8 0-15 3-20 8-5-2-10-3-15-3-20 0-35 12-35 28 0 8 4 16 10 21-6 4-10 11-10 19 0 14 12 26 28 28-2 5-3 10-3 16 0 22 16 40 36 40 4 0 7-1 11-2 3 8 5 17 5 26v82h34v-82c0-9 2-18 5-26 3 1 7 2 11 2 20 0 36-18 36-40 0-6-1-11-3-16 16-2 28-14 28-28 0-8-4-15-10-19 6-5 10-13 10-21 0-16-15-28-35-28-5 0-10 1-15 3-5-5-12-8-20-8z"/>
+</svg>
+</div>
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+<div class="text-center lg:text-left">
+<div class="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-medium mb-6 animate-fade-up">
+<span class="w-2 h-2 bg-accent rounded-full animate-pulse"></span>Trusted by schools across Zimbabwe
+<svg class="w-5 h-3.5 ml-1 rounded-sm shadow-sm" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+<defs><clipPath id="zflag"><rect width="60" height="40"/></clipPath></defs>
+<g clip-path="url(#zflag)">
+<rect width="60" height="40" fill="#009739"/>
+<rect y="10" width="60" height="10" fill="#FEDD00"/>
+<rect y="20" width="60" height="10" fill="#DC143C"/>
+<rect y="30" width="60" height="10" fill="#000000"/>
+<polygon points="0,0 20,20 0,40" fill="#ffffff"/>
+<circle cx="7.5" cy="20" r="2.5" fill="#DC143C"/>
+<g transform="translate(5,14) scale(0.18)">
+<path d="M26 15c-1 0-2 1-3 2-1 2 0 4 1 5 1 1 3 1 4 0 1-1 1-3 0-4-1-2-2-3-2-3zm-4 8c-1 1-1 2 0 3 1 1 2 1 3 0 1-1 1-2 0-3-1-1-2-1-3 0zm8 0c-1 1-1 2 0 3 1 1 2 1 3 0 1-1 1-2 0-3-1-1-2-1-3 0zm-4 4c-1 1-1 3 0 4 1 1 3 1 4 0 1-1 1-3 0-4-1-1-3-1-4 0z" fill="#FEDD00"/>
+</g>
+</g>
+</svg>
+</div>
+<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary leading-tight animate-fade-up delay-100">
+The Only Tool<br><span class="gradient-text">Your School Actually Needs</span>
+</h1>
+<p class="mt-6 text-lg text-navy-500 max-w-xl mx-auto lg:mx-0 animate-fade-up delay-200">
+The all-in-one platform built for Zimbabwean schools. Replace paper registers and spreadsheets with digital attendance, fee tracking, ZIMSEC-ready reports, and staff management — all from one dashboard.
+</p>
+<div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-up delay-300">
+<a href="#demo" class="btn-primary text-white px-8 py-4 rounded-xl text-base font-semibold animate-pulse-glow text-center">Start Free Trial</a>
+<a href="#demo" class="btn-secondary px-8 py-4 rounded-xl text-base font-semibold text-center">Book a Demo</a>
+</div>
+<div class="mt-10 flex flex-wrap items-center gap-6 justify-center lg:justify-start animate-fade-up delay-400">
+<div class="flex items-center gap-2"><svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-sm text-navy-500">No credit card</span></div>
+<div class="flex items-center gap-2"><svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-sm text-navy-500">Setup in minutes</span></div>
+<div class="flex items-center gap-2"><svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-sm text-navy-500">Free support</span></div>
+</div>
+</div>
+<!-- Dashboard Mockup -->
+<div class="relative animate-fade-up delay-300">
+<div class="dashboard-mockup p-4 sm:p-6 animate-float">
+<div class="flex items-center gap-2 mb-4"><div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div><div class="ml-4 flex-1 h-6 bg-white/10 rounded-lg"></div></div>
+<div class="grid grid-cols-3 gap-3 mb-4">
+<div class="bg-white/10 rounded-lg p-3"><div class="text-accent text-xs font-medium mb-1">Students</div><div class="text-white text-lg font-bold">1,247</div><div class="text-green-400 text-xs mt-1">+12% this term</div></div>
+<div class="bg-white/10 rounded-lg p-3"><div class="text-accent text-xs font-medium mb-1">Collection</div><div class="text-white text-lg font-bold">89%</div><div class="text-green-400 text-xs mt-1">+5% vs last</div></div>
+<div class="bg-white/10 rounded-lg p-3"><div class="text-accent text-xs font-medium mb-1">Attendance</div><div class="text-white text-lg font-bold">94%</div><div class="text-green-400 text-xs mt-1">Above target</div></div>
+</div>
+<div class="bg-white/5 rounded-lg p-4"><div class="flex items-end gap-1 h-24"><div class="flex-1 bg-accent/40 rounded-t" style="height:45%"></div><div class="flex-1 bg-accent/50 rounded-t" style="height:60%"></div><div class="flex-1 bg-accent/60 rounded-t" style="height:55%"></div><div class="flex-1 bg-accent/70 rounded-t" style="height:75%"></div><div class="flex-1 bg-accent/80 rounded-t" style="height:85%"></div><div class="flex-1 bg-accent rounded-t" style="height:95%"></div><div class="flex-1 bg-accent/90 rounded-t" style="height:80%"></div></div><div class="mt-2 text-white/50 text-xs text-center">Fee Collection Trend — Term 2, 2026</div></div>
+</div>
+<div class="absolute -top-4 -right-4 w-20 h-20 bg-accent/20 rounded-full blur-xl"></div>
+<div class="absolute -bottom-4 -left-4 w-16 h-16 bg-secondary/20 rounded-full blur-xl"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-20 lg:py-28">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Powerful Features</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Everything Your School Needs in One Place</h2>
+<p class="mt-4 text-lg text-navy-500">Stop juggling multiple tools. School Ledger brings every aspect of school management into a single, elegant platform.</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13.5 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Student Management</h3>
+<p class="text-navy-500 leading-relaxed">Complete student profiles, enrollment tracking, class assignments, and academic history — all in one click. No more paper files.</p>
+</div>
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Attendance Tracking</h3>
+<p class="text-navy-500 leading-relaxed">Digital daily attendance for students and staff. Real-time reports, late arrivals, absence alerts — zero manual registers.</p>
+</div>
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Fee Management</h3>
+<p class="text-navy-500 leading-relaxed">Automated billing, real-time collection tracking, payment receipts, and outstanding balance alerts. Fee collection made effortless.</p>
+</div>
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Staff Management</h3>
+<p class="text-navy-500 leading-relaxed">Staff profiles, attendance tracking, leave management, department organisation, and performance oversight — all centralised.</p>
+</div>
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Analytics &amp; Insights</h3>
+<p class="text-navy-500 leading-relaxed">Visual dashboards with real-time KPIs. Enrollment trends, financial summaries, and attendance patterns — decisions backed by data.</p>
+</div>
+<div class="feature-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 reveal">
+<div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5">
+<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+</div>
+<h3 class="text-xl font-bold text-primary mb-2">Transport Management</h3>
+<p class="text-navy-500 leading-relaxed">Route planning, student assignments, driver kiosk, and transport billing. Keep every student's journey safe and accounted for.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Benefits -->
+<section id="benefits" class="py-20 lg:py-28 bg-gradient-to-b from-navy-50/50 to-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Why School Ledger</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Focus on Education, Not Administration</h2>
+<p class="mt-4 text-lg text-navy-500">School Ledger eliminates the busywork so your team can focus on what matters most — the students.</p>
+</div>
+<!-- Benefit 1 -->
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-20 reveal">
+<div>
+<div class="inline-flex items-center gap-2 bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-semibold mb-4">SAVE TIME</div>
+<h3 class="text-2xl lg:text-3xl font-bold text-primary mb-4">Reclaim 15+ Hours Every Week</h3>
+<p class="text-navy-500 leading-relaxed mb-6">Automate repetitive tasks like fee reminders, attendance registers, report generation, and student record updates. Your admin team will thank you.</p>
+<ul class="space-y-3">
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">Automated billing saves hours of manual invoicing</span></li>
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">One-click reports replace hours of spreadsheet work</span></li>
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">Digital attendance eliminates paper registers entirely</span></li>
+</ul>
+</div>
+<div class="bg-gradient-to-br from-accent/5 to-secondary/5 rounded-2xl p-8 border border-accent/10">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white rounded-xl p-4 shadow-sm text-center"><div class="text-3xl font-bold text-accent">15+</div><div class="text-sm text-navy-500 mt-1">Hours saved/week</div></div>
+<div class="bg-white rounded-xl p-4 shadow-sm text-center"><div class="text-3xl font-bold text-accent">80%</div><div class="text-sm text-navy-500 mt-1">Less paperwork</div></div>
+<div class="bg-white rounded-xl p-4 shadow-sm text-center"><div class="text-3xl font-bold text-accent">3x</div><div class="text-sm text-navy-500 mt-1">Faster reporting</div></div>
+<div class="bg-white rounded-xl p-4 shadow-sm text-center"><div class="text-3xl font-bold text-accent">0</div><div class="text-sm text-navy-500 mt-1">Data entry errors</div></div>
+</div>
+</div>
+</div>
+<!-- Benefit 2 -->
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center reveal">
+<div class="order-2 lg:order-1 bg-gradient-to-br from-secondary/5 to-primary/5 rounded-2xl p-8 border border-secondary/10">
+<div class="space-y-3">
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+<div><div class="font-semibold text-sm text-primary">Fee payment received</div><div class="text-xs text-navy-400">US$250 — Tendai Moyo, Grade 7</div></div>
+</div>
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg></div>
+<div><div class="font-semibold text-sm text-primary">Attendance submitted</div><div class="text-xs text-navy-400">Form 3A — 32/34 present</div></div>
+</div>
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+<div><div class="font-semibold text-sm text-primary">Report generated</div><div class="text-xs text-navy-400">Term 2 financial summary — ready</div></div>
+</div>
+</div>
+</div>
+<div class="order-1 lg:order-2">
+<div class="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-semibold mb-4">REAL-TIME VISIBILITY</div>
+<h3 class="text-2xl lg:text-3xl font-bold text-primary mb-4">Know What's Happening — Right Now</h3>
+<p class="text-navy-500 leading-relaxed mb-6">See fee collections, attendance rates, and student status updates as they happen. No more waiting for end-of-week reports or chasing staff for updates.</p>
+<ul class="space-y-3">
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">Live dashboard updates throughout the day</span></li>
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">Instant alerts for critical events</span></li>
+<li class="flex items-start gap-3"><svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg><span class="text-navy-600">Data-driven decisions, not gut feelings</span></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="py-20 lg:py-28">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Simple Setup</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Up and Running in Under a Day</h2>
+<p class="mt-4 text-lg text-navy-500">No complex installations. No IT team needed. Get started in four simple steps.</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 reveal">
+<div class="relative text-center">
+<div class="w-14 h-14 bg-gradient-to-br from-accent to-accent-dark rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/20"><span class="text-white font-bold text-xl">1</span></div>
+<h4 class="font-bold text-primary text-lg mb-2">Book a Demo</h4>
+<p class="text-navy-500 text-sm">Schedule a personalised walkthrough. See exactly how it works for your school.</p>
+<div class="hidden lg:block absolute top-7 left-[calc(50%+28px)] w-[calc(100%-56px)] h-0.5 bg-gradient-to-r from-accent/30 to-transparent"></div>
+</div>
+<div class="relative text-center">
+<div class="w-14 h-14 bg-gradient-to-br from-secondary to-primary rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-secondary/20"><span class="text-white font-bold text-xl">2</span></div>
+<h4 class="font-bold text-primary text-lg mb-2">Set Up Your School</h4>
+<p class="text-navy-500 text-sm">Configure classes, terms, fee structures, and staff. Our guided setup makes it painless.</p>
+<div class="hidden lg:block absolute top-7 left-[calc(50%+28px)] w-[calc(100%-56px)] h-0.5 bg-gradient-to-r from-secondary/30 to-transparent"></div>
+</div>
+<div class="relative text-center">
+<div class="w-14 h-14 bg-gradient-to-br from-accent to-secondary rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/20"><span class="text-white font-bold text-xl">3</span></div>
+<h4 class="font-bold text-primary text-lg mb-2">Import Your Data</h4>
+<p class="text-navy-500 text-sm">Bulk import students via CSV or add them manually. Existing records migrate seamlessly.</p>
+<div class="hidden lg:block absolute top-7 left-[calc(50%+28px)] w-[calc(100%-56px)] h-0.5 bg-gradient-to-r from-accent/30 to-transparent"></div>
+</div>
+<div class="text-center">
+<div class="w-14 h-14 bg-gradient-to-br from-primary to-navy-800 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary/20"><span class="text-white font-bold text-xl">4</span></div>
+<h4 class="font-bold text-primary text-lg mb-2">Start Managing</h4>
+<p class="text-navy-500 text-sm">Your school is live. Track attendance, collect fees, generate reports — all from one dashboard.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Why Schools Choose Us -->
+<section class="py-20 lg:py-28 bg-primary text-white relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<div class="absolute top-0 left-0 w-96 h-96 bg-accent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-secondary rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+</div>
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Our Advantage</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold">Why Schools Choose School Ledger</h2>
+<p class="mt-4 text-lg text-navy-300">Built by people who understand schools. Designed for the administrators who keep them running.</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 reveal">
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+<h4 class="font-bold text-lg mb-2">Incredibly Easy to Use</h4>
+<p class="text-navy-300 text-sm leading-relaxed">Designed for non-technical users. If your staff can use a smartphone, they can use School Ledger.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+<h4 class="font-bold text-lg mb-2">Enterprise-Grade Security</h4>
+<p class="text-navy-300 text-sm leading-relaxed">Bank-level encryption, role-based access control, and complete data isolation between schools.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></div>
+<h4 class="font-bold text-lg mb-2">Scales With You</h4>
+<p class="text-navy-300 text-sm leading-relaxed">From 50 students to 5,000+. School Ledger grows with your school — no performance issues.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
+<h4 class="font-bold text-lg mb-2">Dedicated Support</h4>
+<p class="text-navy-300 text-sm leading-relaxed">Real humans who respond fast. Chat, email, or phone — we're with you every step of the way.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+<h4 class="font-bold text-lg mb-2">99.9% Uptime</h4>
+<p class="text-navy-300 text-sm leading-relaxed">Your school never stops, and neither do we. Reliable cloud infrastructure ensures always-on access.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+<div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"><svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg></div>
+<h4 class="font-bold text-lg mb-2">Your Data, Your Control</h4>
+<p class="text-navy-300 text-sm leading-relaxed">Export anything, anytime. Full data ownership with no vendor lock-in. Cancel and take your data.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="py-20 lg:py-28">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Testimonials</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Loved by School Leaders</h2>
+<p class="mt-4 text-lg text-navy-500">See what administrators and principals say about their experience with School Ledger.</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 reveal">
+<div class="bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-1 mb-4">
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+<p class="text-navy-600 leading-relaxed mb-6">"We used to spend the entire first week of term doing manual enrollment. Now it takes one afternoon. School Ledger has transformed how we operate."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-gradient-to-br from-accent to-secondary rounded-full flex items-center justify-center text-white font-bold text-sm">TM</div>
+<div><div class="font-semibold text-primary text-sm">Tariro Moyo</div><div class="text-navy-400 text-xs">School Administrator, Heritage School, Mutare</div></div>
+</div>
+</div>
+<div class="bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-1 mb-4">
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+<p class="text-navy-600 leading-relaxed mb-6">"Fee collection was our biggest headache. With School Ledger, our collection rate jumped from 72% to 91% in one term. The automated reminders are a game-changer."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center text-white font-bold text-sm">RN</div>
+<div><div class="font-semibold text-primary text-sm">Robert Ndlovu</div><div class="text-navy-400 text-xs">Principal, Sunrise Academy, Gweru</div></div>
+</div>
+</div>
+<div class="bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-1 mb-4">
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+<svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+</div>
+<p class="text-navy-600 leading-relaxed mb-6">"As a school owner managing three campuses, I needed visibility into every location. School Ledger gives me a single dashboard view across all my schools. Invaluable."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-gradient-to-br from-accent-dark to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">GC</div>
+<div><div class="font-semibold text-primary text-sm">Grace Chikwanha</div><div class="text-navy-400 text-xs">School Owner, Pinnacle College Group</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Statistics -->
+<section class="py-20 lg:py-28 bg-gradient-to-b from-navy-50/50 to-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">Our Impact</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Numbers That Speak for Themselves</h2>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 reveal">
+<div class="stat-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 text-center shadow-sm">
+<div class="text-4xl lg:text-5xl font-extrabold gradient-text mb-2 counter" data-target="200" data-suffix="+">0+</div>
+<div class="text-navy-500 font-medium text-sm">Schools Served</div>
+</div>
+<div class="stat-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 text-center shadow-sm">
+<div class="text-4xl lg:text-5xl font-extrabold gradient-text mb-2 counter" data-target="85000" data-suffix="">0</div>
+<div class="text-navy-500 font-medium text-sm">Students Managed</div>
+</div>
+<div class="stat-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 text-center shadow-sm">
+<div class="text-4xl lg:text-5xl font-extrabold gradient-text mb-2 counter" data-target="98" data-suffix="%">0%</div>
+<div class="text-navy-500 font-medium text-sm">Customer Satisfaction</div>
+</div>
+<div class="stat-card bg-white border border-navy-100 rounded-2xl p-6 lg:p-8 text-center shadow-sm">
+<div class="text-4xl lg:text-5xl font-extrabold gradient-text mb-2 counter" data-target="70" data-suffix="%">0%</div>
+<div class="text-navy-500 font-medium text-sm">Admin Time Saved</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-20 lg:py-28">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16 reveal">
+<span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-3">FAQ</span>
+<h2 class="text-3xl lg:text-4xl font-extrabold text-primary">Common Questions</h2>
+<p class="mt-4 text-lg text-navy-500">Everything you need to know before getting started.</p>
+</div>
+<div class="space-y-4 reveal" id="faq-list">
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">How much does School Ledger cost?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">We offer flexible plans based on your school size. Plans start from US$29/month for smaller schools. All plans include unlimited users, full features, dedicated support, and ZIMSEC/Cambridge-compatible reporting. Contact us for a custom quote.</p></div>
+</div>
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">Is my school's data secure?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">Absolutely. We use bank-level SSL encryption, complete multi-tenant data isolation, role-based access controls, and automated backups. Your data is yours — always.</p></div>
+</div>
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">How long does setup take?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">Most schools are fully operational within one day. Our guided onboarding walks you through everything. No IT skills required.</p></div>
+</div>
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">Do we need training to use it?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">School Ledger is designed to be intuitive — most users are comfortable within minutes. We provide in-app guided tutorials, video walkthroughs, and free onboarding sessions for larger teams.</p></div>
+</div>
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">What kind of support do you offer?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">All plans include email and chat support with response times under 4 hours. Premium plans include priority phone support and a dedicated account manager.</p></div>
+</div>
+<div class="faq-item border border-navy-100 rounded-xl overflow-hidden">
+<button class="faq-toggle w-full flex items-center justify-between p-5 text-left hover:bg-navy-50 transition-colors" aria-expanded="false">
+<span class="font-semibold text-primary pr-4">Can I migrate data from my current system?</span>
+<svg class="faq-icon w-5 h-5 text-navy-400 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</button>
+<div class="faq-answer px-5 pb-5"><p class="text-navy-500 leading-relaxed">Yes! We support CSV imports for student records and provide a bulk import tool. Our team can assist with data mapping and transfer at no extra cost.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CTA + Demo Form -->
+<section id="demo" class="py-20 lg:py-28 bg-gradient-to-br from-primary via-navy-800 to-primary relative overflow-hidden">
+<div class="absolute inset-0 opacity-20"><div class="absolute top-20 left-20 w-72 h-72 bg-accent rounded-full blur-3xl"></div><div class="absolute bottom-20 right-20 w-72 h-72 bg-secondary rounded-full blur-3xl"></div></div>
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+<div class="text-white reveal">
+<h2 class="text-3xl lg:text-4xl font-extrabold leading-tight">Ready to Transform<br>Your Zimbabwean School?</h2>
+<p class="mt-6 text-lg text-navy-200 leading-relaxed">Join schools across Harare, Bulawayo, Mutare, and beyond. Save time, reduce errors, and make better decisions with School Ledger. Book a personalised demo today — no commitment required.</p>
+<div class="mt-8 space-y-4">
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><span class="text-navy-200">Free 30-minute personalised walkthrough</span></div>
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><span class="text-navy-200">See how it works with your actual data</span></div>
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div><span class="text-navy-200">No obligation — cancel anytime</span></div>
+</div>
+</div>
+<div class="reveal">
+<form id="demo-form" class="bg-white rounded-2xl p-6 lg:p-8 shadow-2xl" novalidate>
+<h3 class="text-xl font-bold text-primary mb-1">Book Your Free Demo</h3>
+<p class="text-navy-500 text-sm mb-6">Fill in the details and we'll schedule a personalised demo for your school.</p>
+<div class="space-y-4">
+<div><label for="school-name" class="block text-sm font-medium text-navy-700 mb-1">School Name <span class="text-red-500">*</span></label><input type="text" id="school-name" name="schoolName" required placeholder="e.g. Kwayedza High School" class="w-full px-4 py-3 rounded-lg border border-navy-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-sm"><p class="error-msg">Please enter your school name.</p></div>
+<div><label for="email" class="block text-sm font-medium text-navy-700 mb-1">Email Address <span class="text-red-500">*</span></label><input type="email" id="email" name="email" required placeholder="admin@yourschool.com" class="w-full px-4 py-3 rounded-lg border border-navy-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-sm"><p class="error-msg">Please enter a valid email address.</p></div>
+<div><label for="school-address" class="block text-sm font-medium text-navy-700 mb-1">School Address <span class="text-red-500">*</span></label><input type="text" id="school-address" name="schoolAddress" required placeholder="e.g. 12 Herbert Chitepo Street, Harare" class="w-full px-4 py-3 rounded-lg border border-navy-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-sm"><p class="error-msg">Please enter your school address.</p></div>
+<div><label for="num-students" class="block text-sm font-medium text-navy-700 mb-1">Estimated Number of Students <span class="text-red-500">*</span></label><input type="number" id="num-students" name="numStudents" required min="1" placeholder="e.g. 500" class="w-full px-4 py-3 rounded-lg border border-navy-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all text-sm"><p class="error-msg">Please enter a valid number of students.</p></div>
+</div>
+<p id="form-api-error" class="text-red-600 text-sm mt-1 hidden" style="display:none;min-height:1.25rem"></p>
+<button type="submit" id="demo-submit" class="w-full mt-6 btn-primary text-white px-6 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2"><span>Book My Free Demo</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
+<p class="text-center text-xs text-navy-400 mt-4">No credit card required. We'll reach out within 24 hours.</p>
+</form>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-primary text-white py-16">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12">
+<div>
+<div class="flex items-center gap-2 mb-4"><img src="assets/logo.png" alt="School Ledger" class="w-9 h-9 object-contain"><span class="text-lg font-bold">School Ledger</span></div>
+<p class="text-navy-300 text-sm leading-relaxed">The modern school management platform built for Zimbabwe. Tinokutendai — thank you — for trusting us to help your school thrive.</p>
+</div>
+<div>
+<h5 class="font-semibold mb-4 text-sm">Product</h5>
+<ul class="space-y-2"><li><a href="#features" class="text-navy-300 text-sm hover:text-accent transition-colors">Features</a></li><li><a href="#benefits" class="text-navy-300 text-sm hover:text-accent transition-colors">Benefits</a></li><li><a href="#how-it-works" class="text-navy-300 text-sm hover:text-accent transition-colors">How It Works</a></li><li><a href="#faq" class="text-navy-300 text-sm hover:text-accent transition-colors">FAQ</a></li><li><a href="#demo" class="text-navy-300 text-sm hover:text-accent transition-colors">Book a Demo</a></li></ul>
+</div>
+<div>
+<h5 class="font-semibold mb-4 text-sm">Company</h5>
+<ul class="space-y-2"><li><a href="#" class="text-navy-300 text-sm hover:text-accent transition-colors">About Us</a></li><li><a href="privacy-policy.html" class="text-navy-300 text-sm hover:text-accent transition-colors">Privacy Policy</a></li><li><a href="terms-of-service.html" class="text-navy-300 text-sm hover:text-accent transition-colors">Terms of Service</a></li><li><a href="#" class="text-navy-300 text-sm hover:text-accent transition-colors">Blog</a></li></ul>
+</div>
+<div>
+<h5 class="font-semibold mb-4 text-sm">Contact</h5>
+<ul class="space-y-2">
+<li class="text-navy-300 text-sm flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>hello@schoolledger.com</li>
+<li class="text-navy-300 text-sm flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>+263 77 123 4567</li>
+</ul>
+<div class="flex items-center gap-3 mt-4">
+<a href="#" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors" aria-label="Facebook"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+<a href="#" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors" aria-label="Twitter"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+<a href="#" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-accent/20 transition-colors" aria-label="LinkedIn"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+</div>
+</div>
+</div>
+<div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<p class="text-navy-400 text-sm">&copy; 2026 School Ledger. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a href="privacy-policy.html" class="text-navy-400 text-sm hover:text-accent transition-colors">Privacy Policy</a>
+<span class="text-navy-600">·</span>
+<a href="terms-of-service.html" class="text-navy-400 text-sm hover:text-accent transition-colors">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+var nav=document.getElementById('navbar');
+window.addEventListener('scroll',function(){nav.classList.toggle('nav-scrolled',window.scrollY>50)},{passive:true});
+nav.classList.toggle('nav-scrolled',window.scrollY>50);
+
+var menuBtn=document.getElementById('mobile-menu-btn'),mob=document.getElementById('mobile-menu'),ico=document.getElementById('menu-icon'),open=false;
+menuBtn.addEventListener('click',function(){open=!open;mob.classList.toggle('hidden');ico.setAttribute('d',open?'M6 18L18 6M6 6l12 12':'M4 6h16M4 12h16M4 18h16')});
+mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mob.classList.add('hidden');open=false;ico.setAttribute('d','M4 6h16M4 12h16M4 18h16')})});
+
+var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('active')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+
+var counters=document.querySelectorAll('.counter'),done=false;
+var cobs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting&&!done){done=true;counters.forEach(function(c){var t=parseInt(c.getAttribute('data-target')),s=c.getAttribute('data-suffix')||'',dur=2000,st=performance.now();function u(now){var p=Math.min((now-st)/dur,1),ea=1-Math.pow(1-p,3),v=Math.floor(ea*t);c.textContent=v.toLocaleString()+s;if(p<1)requestAnimationFrame(u)}requestAnimationFrame(u)})}})},{threshold:0.3});
+if(counters.length)cobs.observe(counters[0].closest('section')||counters[0]);
+
+document.querySelectorAll('.faq-toggle').forEach(function(b){b.addEventListener('click',function(){var a=this.nextElementSibling,ic=this.querySelector('.faq-icon'),op=a.classList.contains('open');document.querySelectorAll('.faq-answer').forEach(function(x){x.classList.remove('open')});document.querySelectorAll('.faq-icon').forEach(function(x){x.style.transform='rotate(0deg)'});document.querySelectorAll('.faq-toggle').forEach(function(x){x.setAttribute('aria-expanded','false')});if(!op){a.classList.add('open');ic.style.transform='rotate(180deg)';this.setAttribute('aria-expanded','true')}})});
+
+var DEMO_API_URL='http://localhost:8080/api/demo-requests';
+var form=document.getElementById('demo-form'),toast=document.getElementById('toast');
+var formErrEl=document.getElementById('form-api-error');
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  var ok=true;
+  var fs=[
+    {el:document.getElementById('school-name'),t:function(v){return v.trim().length>0}},
+    {el:document.getElementById('email'),t:function(v){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}},
+    {el:document.getElementById('school-address'),t:function(v){return v.trim().length>=5}},
+    {el:document.getElementById('num-students'),t:function(v){return parseInt(v)>0}}
+  ];
+  fs.forEach(function(f){if(!f.t(f.el.value)){f.el.classList.add('input-error');ok=false}else{f.el.classList.remove('input-error')}});
+  if(!ok)return;
+  if(formErrEl){formErrEl.textContent='';formErrEl.style.display='none';}
+  var btn=document.getElementById('demo-submit');
+  btn.disabled=true;
+  btn.innerHTML='<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Submitting...</span>';
+  var payload={
+    school_name:document.getElementById('school-name').value.trim(),
+    email:document.getElementById('email').value.trim(),
+    school_address:document.getElementById('school-address').value.trim(),
+    estimated_students:parseInt(document.getElementById('num-students').value)||0
+  };
+  fetch(DEMO_API_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .then(function(res){return res.json().then(function(d){return{ok:res.ok,status:res.status,body:d}})})
+  .then(function(r){
+    btn.disabled=false;
+    btn.innerHTML='<span>Book My Free Demo</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+    if(!r.ok){
+      var msg=r.body&&r.body.message?r.body.message:'Something went wrong. Please try again.';
+      if(formErrEl){formErrEl.textContent=msg;formErrEl.style.display='block';}
+      return;
+    }
+    form.reset();
+    fs.forEach(function(f){f.el.classList.remove('input-error')});
+    if(formErrEl){formErrEl.textContent='';formErrEl.style.display='none';}
+    toast.classList.add('show');
+    setTimeout(function(){toast.classList.remove('show')},5000);
+  })
+  .catch(function(){
+    btn.disabled=false;
+    btn.innerHTML='<span>Book My Free Demo</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+    if(formErrEl){formErrEl.textContent='Network error. Please check your connection and try again.';formErrEl.style.display='block';}
+  });
+});
+form.querySelectorAll('input').forEach(function(i){i.addEventListener('input',function(){this.classList.remove('input-error');if(formErrEl){formErrEl.textContent='';formErrEl.style.display='none';}})});
+})();
+</script>
+</body>
+</html>

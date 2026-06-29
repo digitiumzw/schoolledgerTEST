@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service — School Ledger</title>
+<meta name="description" content="School Ledger Terms of Service — the agreement governing your use of the School Ledger platform.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d6196'},secondary:'#2d6196',accent:{DEFAULT:'#34663f',light:'#4a8a55',dark:'#245229'},navy:{50:'#eef2f7',100:'#d6dfe9',200:'#b9c7d8',300:'#96aac4',400:'#6b83a6',500:'#4f6788',600:'#3d536e',700:'#304258',800:'#1a4770',900:'#14365a'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif}
+.nav-scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(26,71,112,.1)}
+.gradient-text{background:linear-gradient(135deg,#34663f,#2d6196);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.prose-section h2{font-size:1.25rem;font-weight:700;color:#1a4770;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #34663f10}
+.prose-section h3{font-size:1rem;font-weight:600;color:#304258;margin-top:1.5rem;margin-bottom:.5rem}
+.prose-section p{color:#4f6788;line-height:1.75;margin-bottom:1rem}
+.prose-section ul{color:#4f6788;line-height:1.75;margin-bottom:1rem;padding-left:1.25rem;list-style:none}
+.prose-section ul li{position:relative;padding-left:1.25rem;margin-bottom:.4rem}
+.prose-section ul li::before{content:'';position:absolute;left:0;top:.65rem;width:6px;height:6px;background:#34663f;border-radius:50%}
+.toc-link{display:block;padding:.35rem .75rem;border-radius:.5rem;font-size:.875rem;color:#4f6788;transition:all .2s}
+.toc-link:hover,.toc-link.active{background:#34663f10;color:#34663f;font-weight:500}
+</style>
+</head>
+<body class="bg-white text-navy-900 antialiased">
+
+<!-- Nav -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-scrolled">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 lg:h-20">
+<a href="index.html" class="flex items-center gap-2">
+<img src="assets/logo.png" alt="School Ledger" class="w-9 h-9 object-contain">
+<span class="text-lg font-bold text-primary">School Ledger</span>
+</a>
+<div class="hidden lg:flex items-center gap-6">
+<a href="index.html#features" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Features</a>
+<a href="index.html#benefits" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Benefits</a>
+<a href="index.html#faq" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">FAQ</a>
+<a href="privacy-policy.html" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Privacy Policy</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<a href="http://localhost:8081" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors border border-navy-200 px-5 py-2.5 rounded-lg hover:border-accent">Sign In</a>
+<a href="index.html#demo" class="inline-flex items-center gap-2 bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-transform shadow-sm">Book a Demo</a>
+</div>
+<button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-navy-50 transition-colors">
+<svg class="w-6 h-6 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+</div>
+</div>
+<div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-navy-100 shadow-lg">
+<div class="px-4 py-4 space-y-3">
+<a href="index.html#features" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Features</a>
+<a href="index.html#benefits" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Benefits</a>
+<a href="privacy-policy.html" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Privacy Policy</a>
+<a href="http://localhost:8081" class="block text-center text-sm font-medium text-navy-700 hover:text-accent border border-navy-200 px-6 py-3 rounded-lg mt-2">Sign In</a>
+<a href="index.html#demo" class="block bg-gradient-to-r from-accent to-accent-dark text-white text-center px-6 py-3 rounded-lg text-sm font-semibold mt-2">Book a Demo</a>
+</div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="pt-28 lg:pt-36 pb-12 lg:pb-16 bg-gradient-to-br from-navy-50 via-white to-secondary/5 relative overflow-hidden">
+<div class="absolute -top-32 -right-32 w-72 h-72 bg-secondary/8 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-20 -left-20 w-60 h-60 bg-accent/8 rounded-full blur-3xl"></div>
+<div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div class="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-1.5 rounded-full text-sm font-medium mb-5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+Clear, fair terms — no surprises
+</div>
+<h1 class="text-4xl lg:text-5xl font-extrabold text-primary leading-tight">Terms of Service</h1>
+<p class="mt-4 text-lg text-navy-500 max-w-2xl mx-auto">These terms govern your school's use of the School Ledger platform. Please read them carefully. By subscribing or using the platform, you agree to these terms.</p>
+<div class="mt-5 flex flex-wrap items-center justify-center gap-6 text-sm text-navy-400">
+<span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>Last updated: 15 June 2026</span>
+<span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Effective: 15 June 2026</span>
+</div>
+</div>
+</section>
+
+<!-- Body -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+<div class="lg:grid lg:grid-cols-[280px_1fr] lg:gap-16">
+
+  <!-- Sidebar TOC -->
+  <aside class="hidden lg:block">
+    <div class="sticky top-28">
+      <p class="text-xs font-semibold text-navy-400 uppercase tracking-wider mb-3">On this page</p>
+      <nav class="space-y-0.5">
+        <a href="#acceptance" class="toc-link">1. Acceptance of Terms</a>
+        <a href="#definitions" class="toc-link">2. Definitions</a>
+        <a href="#services" class="toc-link">3. The Services</a>
+        <a href="#subscriptions" class="toc-link">4. Subscriptions &amp; Payment</a>
+        <a href="#accounts" class="toc-link">5. Accounts &amp; Access</a>
+        <a href="#acceptable-use" class="toc-link">6. Acceptable Use</a>
+        <a href="#tenant-data" class="toc-link">7. Tenant Data</a>
+        <a href="#ip" class="toc-link">8. Intellectual Property</a>
+        <a href="#availability" class="toc-link">9. Availability &amp; Uptime</a>
+        <a href="#support" class="toc-link">10. Support</a>
+        <a href="#liability" class="toc-link">11. Limitation of Liability</a>
+        <a href="#indemnification" class="toc-link">12. Indemnification</a>
+        <a href="#termination" class="toc-link">13. Termination</a>
+        <a href="#changes" class="toc-link">14. Changes to Terms</a>
+        <a href="#governing-law" class="toc-link">15. Governing Law</a>
+        <a href="#contact" class="toc-link">16. Contact Us</a>
+      </nav>
+      <div class="mt-8 p-4 bg-secondary/5 border border-secondary/20 rounded-xl">
+        <p class="text-xs font-semibold text-secondary mb-1">Need help?</p>
+        <p class="text-xs text-navy-500 leading-relaxed">Contact us at <a href="mailto:legal@schoolledger.app" class="text-accent hover:underline">legal@schoolledger.app</a></p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <article class="prose-section min-w-0">
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-sm text-amber-800 leading-relaxed"><strong>Important:</strong> These Terms of Service constitute a legally binding agreement between your school ("Tenant") and School Ledger. The person accepting these terms on behalf of the school confirms they have the authority to bind the institution to this agreement.</p>
+      </div>
+    </div>
+
+    <section id="acceptance">
+      <h2>1. Acceptance of Terms</h2>
+      <p>By registering for, accessing, or using the School Ledger platform (the "Platform"), you ("Tenant", "you", "your") agree to be bound by these Terms of Service ("Terms"), our Privacy Policy, and any additional terms applicable to specific features you use.</p>
+      <p>If you are accepting these Terms on behalf of a school, educational institution, or other organisation, you represent and warrant that you are authorised to do so and that the organisation agrees to be bound by these Terms. In that case, "you" and "your" refer to that organisation.</p>
+      <p>If you do not agree to these Terms, you must not access or use the Platform. Your continued use of the Platform following any amendments to these Terms constitutes acceptance of the revised Terms.</p>
+    </section>
+
+    <section id="definitions">
+      <h2>2. Definitions</h2>
+      <ul>
+        <li><strong>"Platform"</strong> means the School Ledger software-as-a-service application, APIs, and all related features and services provided by us.</li>
+        <li><strong>"Tenant"</strong> means any school, educational institution, or organisation that subscribes to and uses the Platform.</li>
+        <li><strong>"Authorised Users"</strong> means individuals granted access to the Platform by the Tenant, including administrators, bursars, teachers, staff, and driver-kiosk users.</li>
+        <li><strong>"Tenant Data"</strong> means all data, content, and information uploaded to or generated within the Platform by the Tenant or its Authorised Users, including student records, financial records, attendance records, and staff information.</li>
+        <li><strong>"Subscription"</strong> means the paid access plan selected by the Tenant, which determines available features and user limits.</li>
+        <li><strong>"School Ledger", "we", "us", "our"</strong> means the company operating the School Ledger platform.</li>
+      </ul>
+    </section>
+
+    <section id="services">
+      <h2>3. The Services</h2>
+      <p>School Ledger provides a cloud-based school management platform that includes, depending on the Tenant's subscription plan:</p>
+      <ul>
+        <li>Student management — profiles, enrollment, class assignments, and academic history.</li>
+        <li>Fee management — billing, payment recording, receipts, ledger management, and financial reporting.</li>
+        <li>Attendance tracking — student and staff daily attendance, class-level attendance registers, and reporting.</li>
+        <li>Staff management — staff profiles, departments, leave management, and attendance tracking.</li>
+        <li>Transport management — route management, student assignments, driver kiosk access, and transport billing.</li>
+        <li>Analytics and dashboards — real-time KPIs, financial summaries, and operational reporting.</li>
+      </ul>
+      <p>We reserve the right to add, modify, or discontinue features at any time. We will provide reasonable advance notice for material changes to existing features.</p>
+
+      <h3>3.1 Free Trial</h3>
+      <p>We may offer a free trial period for new Tenants. During the trial, full Platform features are available subject to any stated trial limitations. At the end of the trial period, continued access requires an active paid Subscription. Trial data is retained for 30 days after trial expiry, after which it may be permanently deleted.</p>
+    </section>
+
+    <section id="subscriptions">
+      <h2>4. Subscriptions &amp; Payment</h2>
+
+      <h3>4.1 Subscription Plans</h3>
+      <p>Access to the Platform requires a paid Subscription. Subscription plans are priced based on the number of students and features selected. Current plans, pricing, and billing cycles are published on our website and may be updated from time to time with advance notice.</p>
+
+      <h3>4.2 Billing</h3>
+      <ul>
+        <li>Subscriptions are billed in advance on the applicable billing cycle (monthly or annual).</li>
+        <li>All fees are quoted in the currency specified at the time of subscription and are exclusive of applicable taxes.</li>
+        <li>You are responsible for providing valid payment information and ensuring invoices are paid on time.</li>
+        <li>Invoices that remain unpaid for more than <strong>14 days</strong> after the due date may result in suspension of Platform access.</li>
+      </ul>
+
+      <h3>4.3 Upgrades and Downgrades</h3>
+      <ul>
+        <li><strong>Upgrades:</strong> You may upgrade your plan at any time. The new plan takes effect immediately, and billing is adjusted on a pro-rata basis.</li>
+        <li><strong>Downgrades:</strong> Annual plan downgrades to a lower tier take effect at the start of the next billing cycle. Downgrading from an annual plan to a monthly plan is not permitted mid-cycle.</li>
+        <li>Downgrades that reduce student limits below the Tenant's current enrolled student count may be blocked until the Tenant reduces their active student count accordingly.</li>
+      </ul>
+
+      <h3>4.4 Refunds</h3>
+      <p>Subscription fees are non-refundable except as required by applicable law or as explicitly stated in your subscription agreement. If we discontinue the Platform, we will provide a pro-rated refund for any unused prepaid subscription period.</p>
+    </section>
+
+    <section id="accounts">
+      <h2>5. Accounts &amp; Access</h2>
+
+      <h3>5.1 Account Registration</h3>
+      <p>To use the Platform, the Tenant must register an account and provide accurate, complete, and current information. You agree to keep your account information up to date. Accounts are registered to individual institutions and are not transferable.</p>
+
+      <h3>5.2 Authorised Users</h3>
+      <p>The Tenant is responsible for all Authorised Users who access the Platform under its account. You must:</p>
+      <ul>
+        <li>Only grant access to individuals who are bona fide employees, contractors, or staff members of your institution.</li>
+        <li>Assign appropriate roles — administrator, bursar, teacher, or driver — consistent with each user's actual responsibilities.</li>
+        <li>Promptly revoke access for any user who leaves the institution or no longer requires access.</li>
+        <li>Ensure all Authorised Users are aware of and comply with these Terms.</li>
+      </ul>
+
+      <h3>5.3 Credentials Security</h3>
+      <p>You are responsible for maintaining the confidentiality of all login credentials for your Tenant account and all Authorised User accounts. You must notify us immediately at <a href="mailto:support@schoolledger.app" class="text-accent hover:underline">support@schoolledger.app</a> if you suspect any unauthorised access or security compromise. We are not liable for losses caused by compromised credentials resulting from your failure to maintain adequate security.</p>
+    </section>
+
+    <section id="acceptable-use">
+      <h2>6. Acceptable Use</h2>
+      <p>You agree to use the Platform only for lawful purposes and in accordance with these Terms. You must not:</p>
+      <ul>
+        <li>Use the Platform to store, transmit, or distribute content that is unlawful, defamatory, harmful, fraudulent, or violates any third party's rights.</li>
+        <li>Attempt to gain unauthorised access to any part of the Platform, other Tenants' accounts, or our infrastructure.</li>
+        <li>Reverse-engineer, decompile, disassemble, or attempt to extract the source code of the Platform.</li>
+        <li>Use automated scripts, bots, scrapers, or tools to access the Platform other than through our published APIs and with our prior written consent.</li>
+        <li>Introduce viruses, malware, or any other harmful code into the Platform.</li>
+        <li>Use the Platform to store data unrelated to your school's administration (e.g., for personal data storage or unrelated commercial purposes).</li>
+        <li>Resell, sublicense, or provide access to the Platform to any third party who is not an Authorised User of your institution.</li>
+        <li>Use the Platform in a manner that could damage, overload, or impair the Platform's performance or availability for other Tenants.</li>
+        <li>Input student data for students who are not enrolled at or administered by your institution.</li>
+      </ul>
+      <p>We reserve the right to investigate suspected violations and to suspend or terminate access where violations are confirmed, without refund.</p>
+    </section>
+
+    <section id="tenant-data">
+      <h2>7. Tenant Data</h2>
+
+      <h3>7.1 Ownership</h3>
+      <p>You retain full ownership of all Tenant Data. We do not claim any ownership rights over your data. Our access to Tenant Data is limited to what is necessary to operate and support the Platform on your behalf.</p>
+
+      <h3>7.2 Your Responsibilities</h3>
+      <p>As the data controller for all Tenant Data, you are responsible for:</p>
+      <ul>
+        <li>Ensuring you have the legal right to input all data into the Platform, including obtaining required consents from parents or guardians for student data where required by applicable law.</li>
+        <li>Ensuring the accuracy, completeness, and legality of all data you upload or input.</li>
+        <li>Using the Platform's access controls appropriately to restrict who can view and modify sensitive records.</li>
+        <li>Complying with all applicable data protection and privacy laws in your jurisdiction with respect to the data you manage through the Platform.</li>
+      </ul>
+
+      <h3>7.3 Data Portability</h3>
+      <p>You may export your Tenant Data at any time using the Platform's export tools. Upon subscription termination, your data remains available for export for 30 days. After this period, data is permanently deleted. We strongly recommend performing data exports before cancelling your subscription.</p>
+
+      <h3>7.4 Our Data Processing</h3>
+      <p>We process Tenant Data solely as a data processor acting on your instructions, as described in our Privacy Policy. We do not use Tenant Data for advertising, profiling, or any purpose other than delivering and improving the Platform services you have subscribed to.</p>
+    </section>
+
+    <section id="ip">
+      <h2>8. Intellectual Property</h2>
+
+      <h3>8.1 Platform Ownership</h3>
+      <p>The Platform — including all software, algorithms, user interface designs, documentation, trademarks, and related intellectual property — is and remains the exclusive property of School Ledger and its licensors. Nothing in these Terms transfers any intellectual property rights to you.</p>
+
+      <h3>8.2 Licence to Use</h3>
+      <p>Subject to your compliance with these Terms and payment of applicable Subscription fees, we grant you a limited, non-exclusive, non-transferable, revocable licence to access and use the Platform solely for your school's internal administrative purposes during the Subscription term.</p>
+
+      <h3>8.3 Feedback</h3>
+      <p>If you provide us with suggestions, feedback, or ideas regarding the Platform, you grant us an irrevocable, perpetual, royalty-free licence to use and incorporate such feedback into the Platform without obligation of compensation or attribution to you.</p>
+    </section>
+
+    <section id="availability">
+      <h2>9. Availability &amp; Uptime</h2>
+      <p>We aim to provide a reliable platform and target <strong>99.9% monthly uptime</strong> for the core Platform services, excluding scheduled maintenance windows. We will endeavour to conduct scheduled maintenance during off-peak hours and will provide advance notice where practicable.</p>
+      <ul>
+        <li>We do not guarantee uninterrupted or error-free operation of the Platform.</li>
+        <li>Service disruptions caused by factors beyond our reasonable control (including internet outages, natural disasters, government actions, or third-party infrastructure failures) are excluded from uptime calculations.</li>
+        <li>We are not liable for any losses arising from Platform unavailability, except as explicitly agreed in a separate Service Level Agreement (SLA).</li>
+      </ul>
+      <p>Planned maintenance windows will be communicated via in-platform notices and/or email to Tenant administrators with a minimum of <strong>24 hours advance notice</strong>, except in cases of emergency maintenance required to protect Platform security or integrity.</p>
+    </section>
+
+    <section id="support">
+      <h2>10. Support</h2>
+      <p>We provide technical support to Tenants as part of their active Subscription. Support is available via email at <a href="mailto:support@schoolledger.app" class="text-accent hover:underline">support@schoolledger.app</a>. Our standard response time is <strong>within 1 business day</strong> for general enquiries and within <strong>4 hours</strong> for critical issues (e.g., inability to access the Platform or data integrity concerns).</p>
+      <p>Support covers Platform functionality, configuration assistance, and troubleshooting of Platform-related issues. It does not cover:</p>
+      <ul>
+        <li>Issues caused by third-party software, hardware, or internet connectivity on your end.</li>
+        <li>Custom development or feature builds outside the Platform's standard offering.</li>
+        <li>Training beyond our published documentation and guided onboarding materials.</li>
+      </ul>
+    </section>
+
+    <section id="liability">
+      <h2>11. Limitation of Liability</h2>
+      <p>To the maximum extent permitted by applicable law:</p>
+      <ul>
+        <li>The Platform is provided <strong>"as is"</strong> and <strong>"as available"</strong> without warranties of any kind, whether express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement.</li>
+        <li>We do not warrant that the Platform will meet your specific requirements, be error-free, or that results obtained from use of the Platform will be accurate or reliable.</li>
+        <li>In no event shall School Ledger be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, loss of revenue, loss of profits, or business interruption, arising from your use of or inability to use the Platform, even if we have been advised of the possibility of such damages.</li>
+        <li>Our total cumulative liability to you for any claims arising under or related to these Terms shall not exceed the total Subscription fees paid by you to us in the <strong>three (3) months immediately preceding the event</strong> giving rise to the claim.</li>
+      </ul>
+      <p>Nothing in these Terms limits liability that cannot be excluded by law, including liability for fraud, death, or personal injury caused by our negligence.</p>
+    </section>
+
+    <section id="indemnification">
+      <h2>12. Indemnification</h2>
+      <p>You agree to indemnify, defend, and hold harmless School Ledger, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or relating to:</p>
+      <ul>
+        <li>Your use of the Platform in violation of these Terms.</li>
+        <li>Your breach of any applicable law or regulation, including data protection laws, in connection with your use of the Platform.</li>
+        <li>Any Tenant Data you input into the Platform, including claims that such data infringes third-party rights or was collected without proper consent.</li>
+        <li>Any action or omission of your Authorised Users.</li>
+      </ul>
+    </section>
+
+    <section id="termination">
+      <h2>13. Termination</h2>
+
+      <h3>13.1 Termination by You</h3>
+      <p>You may cancel your Subscription at any time by contacting <a href="mailto:support@schoolledger.app" class="text-accent hover:underline">support@schoolledger.app</a> or through the Platform's account settings. Cancellation takes effect at the end of the current billing period. No refunds are issued for unused portions of a billing period.</p>
+
+      <h3>13.2 Termination by Us</h3>
+      <p>We may suspend or terminate your access to the Platform immediately and without notice if:</p>
+      <ul>
+        <li>You materially breach these Terms and fail to remedy the breach within 7 days of written notice.</li>
+        <li>You fail to pay Subscription fees and the account remains overdue for more than 30 days.</li>
+        <li>We have reasonable grounds to believe your use of the Platform is causing harm to the Platform, other Tenants, or third parties.</li>
+        <li>We are required to do so by law or court order.</li>
+      </ul>
+      <p>We may also terminate these Terms with <strong>30 days written notice</strong> for any other reason, in which case we will provide a pro-rated refund for any prepaid unused Subscription period.</p>
+
+      <h3>13.3 Effect of Termination</h3>
+      <p>Upon termination or expiry of your Subscription:</p>
+      <ul>
+        <li>Your access and all Authorised Users' access to the Platform is immediately revoked.</li>
+        <li>Your Tenant Data remains available for export for <strong>30 days</strong> following termination.</li>
+        <li>After 30 days, all Tenant Data is permanently and irreversibly deleted from our systems.</li>
+        <li>Sections of these Terms that by their nature survive termination (including Sections 7.1, 8.1, 11, 12, and 15) remain in full force after termination.</li>
+      </ul>
+    </section>
+
+    <section id="changes">
+      <h2>14. Changes to Terms</h2>
+      <p>We may update these Terms from time to time. We will notify you of material changes by:</p>
+      <ul>
+        <li>Sending an email to the Tenant's primary administrator email address.</li>
+        <li>Displaying a prominent notice within the Platform.</li>
+      </ul>
+      <p>We will provide at least <strong>14 days advance notice</strong> before material changes take effect. Changes to pricing require at least <strong>30 days advance notice</strong>. Your continued use of the Platform after the effective date constitutes acceptance of the revised Terms. If you do not agree to the revised Terms, you must cancel your Subscription before the effective date.</p>
+    </section>
+
+    <section id="governing-law">
+      <h2>15. Governing Law &amp; Disputes</h2>
+      <p>These Terms are governed by and construed in accordance with the laws of the jurisdiction in which School Ledger is incorporated, without regard to conflict of law principles.</p>
+      <p>In the event of any dispute arising out of or in connection with these Terms or the Platform, the parties agree to first attempt to resolve the dispute informally by contacting <a href="mailto:legal@schoolledger.app" class="text-accent hover:underline">legal@schoolledger.app</a>. If the dispute cannot be resolved informally within 30 days, either party may pursue their available legal remedies.</p>
+      <p>If any provision of these Terms is found to be unenforceable or invalid by a court of competent jurisdiction, that provision will be limited or eliminated to the minimum extent necessary, and the remaining provisions of these Terms will continue in full force and effect.</p>
+    </section>
+
+    <section id="contact">
+      <h2>16. Contact Us</h2>
+      <p>For questions, concerns, or notices regarding these Terms of Service, please contact us:</p>
+      <div class="mt-4 grid sm:grid-cols-2 gap-4">
+        <div class="bg-navy-50 rounded-xl p-5 border border-navy-100">
+          <p class="text-sm font-semibold text-primary mb-1">Legal &amp; Compliance</p>
+          <a href="mailto:legal@schoolledger.app" class="text-accent text-sm hover:underline font-medium">legal@schoolledger.app</a>
+          <p class="text-xs text-navy-400 mt-1">Terms, contracts &amp; compliance</p>
+        </div>
+        <div class="bg-navy-50 rounded-xl p-5 border border-navy-100">
+          <p class="text-sm font-semibold text-primary mb-1">General Support</p>
+          <a href="mailto:support@schoolledger.app" class="text-accent text-sm hover:underline font-medium">support@schoolledger.app</a>
+          <p class="text-xs text-navy-400 mt-1">Subscriptions, billing &amp; access</p>
+        </div>
+      </div>
+      <p class="mt-6 p-4 bg-accent/5 border border-accent/20 rounded-xl text-sm text-navy-600 leading-relaxed">By using the School Ledger platform, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our <a href="privacy-policy.html" class="text-accent hover:underline font-medium">Privacy Policy</a>.</p>
+    </section>
+
+  </article>
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-primary text-white mt-16">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid md:grid-cols-3 gap-8 mb-10">
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <img src="assets/logo.png" alt="School Ledger" class="w-8 h-8 object-contain">
+      <span class="font-bold text-base">School Ledger</span>
+    </div>
+    <p class="text-navy-300 text-sm leading-relaxed">The modern school management platform. Trusted by 200+ schools.</p>
+  </div>
+  <div>
+    <p class="text-sm font-semibold text-white mb-3">Platform</p>
+    <div class="space-y-2">
+      <a href="index.html#features" class="block text-sm text-navy-300 hover:text-accent transition-colors">Features</a>
+      <a href="index.html#how-it-works" class="block text-sm text-navy-300 hover:text-accent transition-colors">How It Works</a>
+      <a href="index.html#demo" class="block text-sm text-navy-300 hover:text-accent transition-colors">Book a Demo</a>
+    </div>
+  </div>
+  <div>
+    <p class="text-sm font-semibold text-white mb-3">Legal</p>
+    <div class="space-y-2">
+      <a href="privacy-policy.html" class="block text-sm text-navy-300 hover:text-accent transition-colors">Privacy Policy</a>
+      <a href="terms-of-service.html" class="block text-sm text-accent font-medium">Terms of Service</a>
+      <a href="mailto:support@schoolledger.app" class="block text-sm text-navy-300 hover:text-accent transition-colors">Contact Support</a>
+    </div>
+  </div>
+</div>
+<div class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <p class="text-navy-400 text-sm">&copy; 2026 School Ledger. All rights reserved.</p>
+  <div class="flex items-center gap-4">
+    <a href="privacy-policy.html" class="text-navy-400 text-sm hover:text-accent transition-colors">Privacy Policy</a>
+    <span class="text-navy-600">·</span>
+    <a href="terms-of-service.html" class="text-accent text-sm font-medium">Terms of Service</a>
+  </div>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+var nav=document.getElementById('navbar');
+window.addEventListener('scroll',function(){nav.classList.toggle('nav-scrolled',window.scrollY>50)},{passive:true});
+var menuBtn=document.getElementById('mobile-menu-btn'),mob=document.getElementById('mobile-menu'),ico=document.getElementById('menu-icon'),open=false;
+menuBtn.addEventListener('click',function(){open=!open;mob.classList.toggle('hidden');ico.setAttribute('d',open?'M6 18L18 6M6 6l12 12':'M4 6h16M4 12h16M4 18h16')});
+mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mob.classList.add('hidden');open=false;ico.setAttribute('d','M4 6h16M4 12h16M4 18h16')})});
+
+var links=document.querySelectorAll('.toc-link');
+var sections=document.querySelectorAll('section[id]');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120;
+  sections.forEach(function(s){
+    if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight){
+      links.forEach(function(l){l.classList.remove('active')});
+      var active=document.querySelector('.toc-link[href="#'+s.id+'"]');
+      if(active)active.classList.add('active');
+    }
+  });
+},{passive:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# ─── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.docker.example
+*.key
+*.pem
+# ─── PHP / CodeIgniter ─────────────────────────────────────────────────────────
+backend/vendor/
+backend/*.log
+# Keep writable/ subfolders tracked, but ignore their contents
+backend/writable/logs/*
+!backend/writable/logs/.gitkeep
+backend/writable/cache/*
+!backend/writable/cache/.gitkeep
+backend/writable/session/*
+!backend/writable/session/.gitkeep
+backend/writable/uploads/*
+!backend/writable/uploads/.gitkeep
+backend/writable/invoices/*
+!backend/writable/invoices/.gitkeep
+
+# ─── Node / TypeScript ─────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+
+# ─── OS / editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+
+# ─── Spec / memory (generated, not source) ─────────────────────────────────────
+# specs/ intentionally tracked
+backend/writable/debugbar/*
+!backend/writable/debugbar/.gitkeep
+
+backend/tests/*
+backend/build/*
+specs/056-fee-structure-billing/FEE_STRUCTURE_BILLING.md
+frontend/tsconfig.*
+start.sh
+IDEA.md
+qa/*
+BUSINESS_PROFILE.md
+DEPLOY.md
+DEPLOYMENT_GUIDE.md

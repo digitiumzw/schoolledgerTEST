@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — School Ledger</title>
+<meta name="description" content="School Ledger Privacy Policy — how we collect, use, and protect your school's data.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d6196'},secondary:'#2d6196',accent:{DEFAULT:'#34663f',light:'#4a8a55',dark:'#245229'},navy:{50:'#eef2f7',100:'#d6dfe9',200:'#b9c7d8',300:'#96aac4',400:'#6b83a6',500:'#4f6788',600:'#3d536e',700:'#304258',800:'#1a4770',900:'#14365a'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif}
+.nav-scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(26,71,112,.1)}
+.gradient-text{background:linear-gradient(135deg,#34663f,#2d6196);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.prose-section h2{font-size:1.25rem;font-weight:700;color:#1a4770;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #34663f10}
+.prose-section h3{font-size:1rem;font-weight:600;color:#304258;margin-top:1.5rem;margin-bottom:.5rem}
+.prose-section p{color:#4f6788;line-height:1.75;margin-bottom:1rem}
+.prose-section ul{color:#4f6788;line-height:1.75;margin-bottom:1rem;padding-left:1.25rem;list-style:none}
+.prose-section ul li{position:relative;padding-left:1.25rem;margin-bottom:.4rem}
+.prose-section ul li::before{content:'';position:absolute;left:0;top:.65rem;width:6px;height:6px;background:#34663f;border-radius:50%}
+.toc-link{display:block;padding:.35rem .75rem;border-radius:.5rem;font-size:.875rem;color:#4f6788;transition:all .2s}
+.toc-link:hover,.toc-link.active{background:#34663f10;color:#34663f;font-weight:500}
+</style>
+</head>
+<body class="bg-white text-navy-900 antialiased">
+
+<!-- Nav -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-scrolled">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 lg:h-20">
+<a href="index.html" class="flex items-center gap-2">
+<img src="assets/logo.png" alt="School Ledger" class="w-9 h-9 object-contain">
+<span class="text-lg font-bold text-primary">School Ledger</span>
+</a>
+<div class="hidden lg:flex items-center gap-6">
+<a href="index.html#features" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Features</a>
+<a href="index.html#benefits" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Benefits</a>
+<a href="index.html#faq" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">FAQ</a>
+<a href="terms-of-service.html" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Terms of Service</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<a href="http://localhost:8081" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors border border-navy-200 px-5 py-2.5 rounded-lg hover:border-accent">Sign In</a>
+<a href="index.html#demo" class="inline-flex items-center gap-2 bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-transform shadow-sm">Book a Demo</a>
+</div>
+<button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-navy-50 transition-colors">
+<svg class="w-6 h-6 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+</div>
+</div>
+<div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-navy-100 shadow-lg">
+<div class="px-4 py-4 space-y-3">
+<a href="index.html#features" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Features</a>
+<a href="index.html#benefits" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Benefits</a>
+<a href="terms-of-service.html" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Terms of Service</a>
+<a href="http://localhost:8081" class="block text-center text-sm font-medium text-navy-700 hover:text-accent border border-navy-200 px-6 py-3 rounded-lg mt-2">Sign In</a>
+<a href="index.html#demo" class="block bg-gradient-to-r from-accent to-accent-dark text-white text-center px-6 py-3 rounded-lg text-sm font-semibold mt-2">Book a Demo</a>
+</div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="pt-28 lg:pt-36 pb-12 lg:pb-16 bg-gradient-to-br from-navy-50 via-white to-accent/5 relative overflow-hidden">
+<div class="absolute -top-32 -right-32 w-72 h-72 bg-accent/8 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-20 -left-20 w-60 h-60 bg-secondary/8 rounded-full blur-3xl"></div>
+<div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div class="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-medium mb-5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+Your privacy is our commitment
+</div>
+<h1 class="text-4xl lg:text-5xl font-extrabold text-primary leading-tight">Privacy Policy</h1>
+<p class="mt-4 text-lg text-navy-500 max-w-2xl mx-auto">We take the privacy of your school's data and your students' information seriously. This policy explains exactly what we collect, why we collect it, and how it is protected.</p>
+<div class="mt-5 flex flex-wrap items-center justify-center gap-6 text-sm text-navy-400">
+<span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>Last updated: 15 June 2026</span>
+<span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Effective: 15 June 2026</span>
+</div>
+</div>
+</section>
+
+<!-- Body -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+<div class="lg:grid lg:grid-cols-[280px_1fr] lg:gap-16">
+
+  <!-- Sidebar TOC -->
+  <aside class="hidden lg:block">
+    <div class="sticky top-28">
+      <p class="text-xs font-semibold text-navy-400 uppercase tracking-wider mb-3">On this page</p>
+      <nav class="space-y-0.5">
+        <a href="#overview" class="toc-link">1. Overview</a>
+        <a href="#who-we-are" class="toc-link">2. Who We Are</a>
+        <a href="#data-we-collect" class="toc-link">3. Data We Collect</a>
+        <a href="#how-we-use" class="toc-link">4. How We Use Your Data</a>
+        <a href="#data-sharing" class="toc-link">5. Data Sharing</a>
+        <a href="#data-security" class="toc-link">6. Data Security</a>
+        <a href="#data-retention" class="toc-link">7. Data Retention</a>
+        <a href="#tenant-isolation" class="toc-link">8. Tenant Data Isolation</a>
+        <a href="#student-data" class="toc-link">9. Student Data</a>
+        <a href="#your-rights" class="toc-link">10. Your Rights</a>
+        <a href="#cookies" class="toc-link">11. Cookies</a>
+        <a href="#third-party" class="toc-link">12. Third-Party Services</a>
+        <a href="#changes" class="toc-link">13. Policy Changes</a>
+        <a href="#contact" class="toc-link">14. Contact Us</a>
+      </nav>
+      <div class="mt-8 p-4 bg-accent/5 border border-accent/20 rounded-xl">
+        <p class="text-xs font-semibold text-accent mb-1">Questions?</p>
+        <p class="text-xs text-navy-500 leading-relaxed">Contact our privacy team at <a href="mailto:privacy@schoolledger.app" class="text-accent hover:underline">privacy@schoolledger.app</a></p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <article class="prose-section min-w-0">
+
+    <section id="overview">
+      <h2>1. Overview</h2>
+      <p>School Ledger ("we", "our", "us") is committed to protecting the privacy and security of data entrusted to us by the schools and institutions ("Tenants") that use our platform. This Privacy Policy describes how we collect, process, store, and safeguard personal and institutional data in connection with our school management software-as-a-service platform.</p>
+      <p>By subscribing to and using School Ledger, you (the Tenant — typically a school or educational institution) and your authorised users agree to the practices described in this policy. If you do not agree, please discontinue use of the platform.</p>
+      <p>This policy applies to all users of the School Ledger platform, including school administrators, bursars, teachers, staff members, and driver-kiosk users operating under a Tenant subscription.</p>
+    </section>
+
+    <section id="who-we-are">
+      <h2>2. Who We Are</h2>
+      <p><strong>School Ledger</strong> is a cloud-based school management platform that provides tools for student management, fee collection and billing, staff and attendance tracking, transport management, and reporting. The platform is provided as a multi-tenant software-as-a-service (SaaS).</p>
+      <p>For purposes of data protection, School Ledger acts as the <strong>data processor</strong> on behalf of each Tenant. Each Tenant school is the <strong>data controller</strong> for all personal data relating to their students, staff, and parents that they input into the platform.</p>
+    </section>
+
+    <section id="data-we-collect">
+      <h2>3. Data We Collect</h2>
+      <p>We collect only the data necessary to deliver and improve our services. This falls into two categories:</p>
+
+      <h3>3.1 Data You Provide (Tenant-Supplied Data)</h3>
+      <p>As a Tenant administrator or authorised user, you may input the following data into the platform:</p>
+      <ul>
+        <li><strong>Student records:</strong> full name, date of birth, gender, class, enrollment status, admission number, address, contact information, and academic history.</li>
+        <li><strong>Staff records:</strong> full name, employee ID, department, role, contact details, employment status, and attendance records.</li>
+        <li><strong>Financial data:</strong> fee structures, billing records, payment amounts, payment methods, receipts, outstanding balances, and ledger adjustments.</li>
+        <li><strong>Transport data:</strong> route assignments, vehicle information, driver details, student stop assignments, and transport billing records.</li>
+        <li><strong>Attendance data:</strong> daily student attendance, class attendance registers, staff check-in/check-out times, and leave records.</li>
+        <li><strong>Account information:</strong> names, email addresses, and roles of all users invited to the Tenant's account.</li>
+      </ul>
+
+      <h3>3.2 Data We Collect Automatically</h3>
+      <ul>
+        <li><strong>Authentication tokens:</strong> JWT tokens generated upon login, used to maintain secure sessions.</li>
+        <li><strong>Usage logs:</strong> API request logs including timestamps, endpoint paths, HTTP status codes, and IP addresses — retained for security monitoring and troubleshooting.</li>
+        <li><strong>Audit trails:</strong> a record of key actions (e.g., payment recorded, student status changed, charge voided) tied to the user who performed them, used for accountability and dispute resolution.</li>
+        <li><strong>Technical metadata:</strong> browser type, device type, and operating system, collected to optimise compatibility and performance.</li>
+      </ul>
+    </section>
+
+    <section id="how-we-use">
+      <h2>4. How We Use Your Data</h2>
+      <p>We use collected data solely for the following purposes:</p>
+      <ul>
+        <li>Delivering the platform's core features — student records, billing, attendance, transport, and reporting — to your school.</li>
+        <li>Authenticating users and enforcing role-based access controls to ensure only authorised personnel access your data.</li>
+        <li>Generating receipts, financial summaries, and reports on your behalf.</li>
+        <li>Maintaining platform security, detecting fraud, and preventing unauthorised access.</li>
+        <li>Providing customer support, including diagnosing technical issues you report to us.</li>
+        <li>Improving platform reliability, performance, and features using aggregated, anonymised usage patterns — never individual student records.</li>
+        <li>Sending transactional communications such as account invitations, password resets, subscription notifications, and critical service alerts.</li>
+      </ul>
+      <p>We do <strong>not</strong> use your data for advertising, profiling, or selling to third parties under any circumstances.</p>
+    </section>
+
+    <section id="data-sharing">
+      <h2>5. Data Sharing</h2>
+      <p>We do not sell, rent, or trade your personal or institutional data. Data may only be shared in the following limited circumstances:</p>
+      <ul>
+        <li><strong>Infrastructure providers:</strong> We use reputable cloud hosting and database providers to store and serve your data. These providers act as sub-processors under strict data processing agreements and are not permitted to access or use your data for their own purposes.</li>
+        <li><strong>Email delivery services:</strong> Transactional emails (e.g., account invitations, password resets) are sent via a third-party email delivery provider. Only the recipient address and message content necessary for delivery are shared.</li>
+        <li><strong>Payment processors:</strong> Where integrated payment gateways are used (e.g., for online fee collection), only the data required to complete the transaction is shared with the payment processor. We do not store full card numbers on our servers.</li>
+      </ul>
+    </section>
+
+    <section id="data-security">
+      <h2>6. Data Security</h2>
+      <p>We implement industry-standard technical and organisational security measures to protect your data:</p>
+      <ul>
+        <li><strong>Encryption in transit:</strong> All data transmitted between your browser and our servers is encrypted using TLS (HTTPS). Unencrypted HTTP connections are rejected.</li>
+        <li><strong>Encryption at rest:</strong> Sensitive data stored in our databases is encrypted at rest using AES-256 or equivalent standards.</li>
+        <li><strong>Role-based access control:</strong> Users only access data within their assigned role and Tenant. Cross-tenant data access is architecturally prevented.</li>
+        <li><strong>Audit logging:</strong> All significant data mutations are logged with user ID, timestamp, and action type.</li>
+        <li><strong>Access controls:</strong> Production database access is restricted to authorised personnel only and requires multi-factor authentication.</li>
+        <li><strong>Regular backups:</strong> Data is backed up regularly to geographically redundant storage.</li>
+      </ul>
+    </section>
+
+   
+    <section id="student-data">
+      <h2>9. Student Data</h2>
+      <p>We recognise that student data is particularly sensitive, as it often relates to minors. The following specific commitments apply:</p>
+      <ul>
+        <li>Student personal data is used <strong>exclusively</strong> to provide the school management services subscribed to by the Tenant school. It is never used for advertising, profiling, or any purpose outside the scope of delivering those services.</li>
+        <li>Student data is never sold, shared with third parties for commercial purposes, or used to build profiles outside of the platform.</li>
+        <li>The Tenant school, as data controller, is responsible for obtaining any consents required from parents or guardians under applicable law before inputting student data into the platform.</li>
+        <li>Access to student records is restricted by role: administrators and bursars have broad access; teachers have access only to their assigned classes; driver-kiosk users see only route-relevant student names and payment status.</li>
+      </ul>
+    </section>
+
+    <section id="your-rights">
+      <h2>10. Your Rights</h2>
+      <p>As a Tenant or authorised user, you have the following rights with respect to your data:</p>
+      <ul>
+        <li><strong>Access:</strong> You may request a copy of all data we hold relating to your school at any time.</li>
+        <li><strong>Correction:</strong> You may update or correct inaccurate data directly within the platform or by contacting support.</li>
+        <li><strong>Portability:</strong> You may export your data in a machine-readable format (CSV/JSON) at any time via the platform's export tools, or by requesting a full export from our support team.</li>
+        <li><strong>Erasure:</strong> You may request deletion of your Tenant data and all associated records at any time. See Section 7 for details.</li>
+        <li><strong>Restriction:</strong> You may request that we restrict processing of your data while a dispute is being resolved.</li>
+        <li><strong>Objection:</strong> You may object to specific processing activities where you believe there is no lawful basis.</li>
+      </ul>
+      <p>To exercise any of these rights, contact <a href="mailto:privacy@schoolledger.app" class="text-accent hover:underline">privacy@schoolledger.app</a>. We will respond within <strong>14 business days</strong>.</p>
+    </section>
+
+    <section id="cookies">
+      <h2>11. Cookies &amp; Local Storage</h2>
+      <p>School Ledger uses the following browser technologies:</p>
+      <ul>
+        <li><strong>Authentication tokens (localStorage):</strong> JWT access tokens are stored in the browser's local storage to maintain your logged-in session. These tokens expire automatically and are cleared on sign-out.</li>
+        <li><strong>Session preferences (localStorage):</strong> UI preferences such as sidebar state and active tab are stored locally and never transmitted to our servers.</li>
+        <li><strong>No advertising cookies:</strong> We do not use advertising cookies, third-party tracking pixels, or analytics cookies from third-party advertising networks.</li>
+      </ul>
+      <p>The platform's core functionality does not depend on advertising or tracking cookies. You may clear browser storage at any time without affecting your data on our servers.</p>
+    </section>
+
+    <section id="third-party">
+      <h2>12. Third-Party Services</h2>
+      <p>We may integrate with the following categories of third-party services. All integrations are governed by data processing agreements:</p>
+      <ul>
+        <li><strong>Cloud infrastructure:</strong> Our platform runs on cloud infrastructure providers who provide compute, storage, and networking services under strict data processing agreements.</li>
+        <li><strong>Email delivery:</strong> Transactional emails are delivered via an email API provider. Recipient addresses and email content are transmitted to them solely for delivery purposes.</li>
+        <li><strong>Payment gateways:</strong> Schools may optionally connect payment gateway integrations (e.g., Paynow). Transaction data is passed directly between the payer and the gateway; we record confirmation references only.</li>
+      </ul>
+      <p>We do not integrate with social media platforms, advertising networks, or data brokers.</p>
+    </section>
+
+    <section id="changes">
+      <h2>13. Policy Changes</h2>
+      <p>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. When we do:</p>
+      <ul>
+        <li>The "Last updated" date at the top of this page will be revised.</li>
+        <li>For material changes, we will notify all active Tenant administrators via email and an in-platform notice at least <strong>14 days</strong> before the changes take effect.</li>
+        <li>Your continued use of the platform after the effective date constitutes acceptance of the revised policy.</li>
+      </ul>
+      <p>We encourage you to review this policy periodically. Previous versions are available upon request.</p>
+    </section>
+
+    <section id="contact">
+      <h2>14. Contact Us</h2>
+      <p>If you have questions, concerns, or requests relating to this Privacy Policy or the handling of your data, please contact us:</p>
+      <div class="mt-4 grid sm:grid-cols-2 gap-4">
+        <div class="bg-navy-50 rounded-xl p-5 border border-navy-100">
+          <p class="text-sm font-semibold text-primary mb-1">Privacy Team</p>
+          <a href="mailto:privacy@schoolledger.app" class="text-accent text-sm hover:underline font-medium">privacy@schoolledger.app</a>
+          <p class="text-xs text-navy-400 mt-1">Response within 14 business days</p>
+        </div>
+        <div class="bg-navy-50 rounded-xl p-5 border border-navy-100">
+          <p class="text-sm font-semibold text-primary mb-1">General Support</p>
+          <a href="mailto:support@schoolledger.app" class="text-accent text-sm hover:underline font-medium">support@schoolledger.app</a>
+          <p class="text-xs text-navy-400 mt-1">Response within 1 business day</p>
+        </div>
+      </div>
+      <p class="mt-6 text-sm text-navy-400">If you are unsatisfied with our response, you have the right to lodge a complaint with the relevant data protection authority in your jurisdiction.</p>
+    </section>
+
+  </article>
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-primary text-white mt-16">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid md:grid-cols-3 gap-8 mb-10">
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <img src="assets/logo.png" alt="School Ledger" class="w-8 h-8 object-contain">
+      <span class="font-bold text-base">School Ledger</span>
+    </div>
+    <p class="text-navy-300 text-sm leading-relaxed">The modern school management platform. Trusted by 200+ schools.</p>
+  </div>
+  <div>
+    <p class="text-sm font-semibold text-white mb-3">Platform</p>
+    <div class="space-y-2">
+      <a href="index.html#features" class="block text-sm text-navy-300 hover:text-accent transition-colors">Features</a>
+      <a href="index.html#how-it-works" class="block text-sm text-navy-300 hover:text-accent transition-colors">How It Works</a>
+      <a href="index.html#demo" class="block text-sm text-navy-300 hover:text-accent transition-colors">Book a Demo</a>
+    </div>
+  </div>
+  <div>
+    <p class="text-sm font-semibold text-white mb-3">Legal</p>
+    <div class="space-y-2">
+      <a href="privacy-policy.html" class="block text-sm text-accent font-medium">Privacy Policy</a>
+      <a href="terms-of-service.html" class="block text-sm text-navy-300 hover:text-accent transition-colors">Terms of Service</a>
+      <a href="mailto:support@schoolledger.app" class="block text-sm text-navy-300 hover:text-accent transition-colors">Contact Support</a>
+    </div>
+  </div>
+</div>
+<div class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <p class="text-navy-400 text-sm">&copy; 2026 School Ledger. All rights reserved.</p>
+  <div class="flex items-center gap-4">
+    <a href="privacy-policy.html" class="text-accent text-sm font-medium">Privacy Policy</a>
+    <span class="text-navy-600">·</span>
+    <a href="terms-of-service.html" class="text-navy-400 text-sm hover:text-accent transition-colors">Terms of Service</a>
+  </div>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+var nav=document.getElementById('navbar');
+window.addEventListener('scroll',function(){nav.classList.toggle('nav-scrolled',window.scrollY>50)},{passive:true});
+var menuBtn=document.getElementById('mobile-menu-btn'),mob=document.getElementById('mobile-menu'),ico=document.getElementById('menu-icon'),open=false;
+menuBtn.addEventListener('click',function(){open=!open;mob.classList.toggle('hidden');ico.setAttribute('d',open?'M6 18L18 6M6 6l12 12':'M4 6h16M4 12h16M4 18h16')});
+mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mob.classList.add('hidden');open=false;ico.setAttribute('d','M4 6h16M4 12h16M4 18h16')})});
+
+var links=document.querySelectorAll('.toc-link');
+var sections=document.querySelectorAll('section[id]');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120;
+  sections.forEach(function(s){
+    if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight){
+      links.forEach(function(l){l.classList.remove('active')});
+      var active=document.querySelector('.toc-link[href="#'+s.id+'"]');
+      if(active)active.classList.add('active');
+    }
+  });
+},{passive:true});
+})();
+</script>
+</body>
+</html>
