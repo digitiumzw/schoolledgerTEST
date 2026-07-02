@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings } from "@/types/dashboard";
 
 export interface SchoolInfoFormProps {
@@ -19,25 +18,6 @@ export function SchoolInfoForm({ settings, onSettingsChange }: SchoolInfoFormPro
           onChange={(e) => onSettingsChange({ ...settings, schoolName: e.target.value })}
           placeholder="Enter school name"
         />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="currency">Default Currency</Label>
-        <Select
-          value={settings.defaultCurrency}
-          onValueChange={(value) => onSettingsChange({ ...settings, defaultCurrency: value })}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="USD">USD ($)</SelectItem>
-            <SelectItem value="ZWL">ZWL (Z$)</SelectItem>
-            <SelectItem value="ZAR">ZAR (R)</SelectItem>
-            <SelectItem value="EUR">EUR (€)</SelectItem>
-            <SelectItem value="GBP">GBP (£)</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="space-y-2">
@@ -61,7 +41,7 @@ export function SchoolInfoForm({ settings, onSettingsChange }: SchoolInfoFormPro
         />
       </div>
 
-      <div className="space-y-2 md:col-span-2">
+      <div className="space-y-2 md:col-span-1">
         <Label htmlFor="address">Address</Label>
         <Input
           id="address"

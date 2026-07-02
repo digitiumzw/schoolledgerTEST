@@ -8,20 +8,20 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
-tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d6196'},secondary:'#2d6196',accent:{DEFAULT:'#34663f',light:'#4a8a55',dark:'#245229'},navy:{50:'#eef2f7',100:'#d6dfe9',200:'#b9c7d8',300:'#96aac4',400:'#6b83a6',500:'#4f6788',600:'#3d536e',700:'#304258',800:'#1a4770',900:'#14365a'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
+tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#0a1628',light:'#142238'},secondary:'#3c6e9a',accent:{DEFAULT:'#1cbfa5',light:'#2ed9bd',dark:'#159c87'},navy:{50:'#f0f4f8',100:'#d9e2ec',200:'#bcccdc',300:'#9fb3c8',400:'#627d98',500:'#486581',600:'#334e68',700:'#243b53',800:'#102a43',900:'#0a1628'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif}
-.nav-scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(26,71,112,.1)}
-.gradient-text{background:linear-gradient(135deg,#34663f,#2d6196);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.prose-section h2{font-size:1.25rem;font-weight:700;color:#1a4770;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #34663f10}
-.prose-section h3{font-size:1rem;font-weight:600;color:#304258;margin-top:1.5rem;margin-bottom:.5rem}
-.prose-section p{color:#4f6788;line-height:1.75;margin-bottom:1rem}
-.prose-section ul{color:#4f6788;line-height:1.75;margin-bottom:1rem;padding-left:1.25rem;list-style:none}
+.nav-scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(10,22,40,.1)}
+.gradient-text{background:linear-gradient(135deg,#1cbfa5,#3c6e9a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.prose-section h2{font-size:1.25rem;font-weight:700;color:#0a1628;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #1cbfa510}
+.prose-section h3{font-size:1rem;font-weight:600;color:#243b53;margin-top:1.5rem;margin-bottom:.5rem}
+.prose-section p{color:#486581;line-height:1.75;margin-bottom:1rem}
+.prose-section ul{color:#486581;line-height:1.75;margin-bottom:1rem;padding-left:1.25rem;list-style:none}
 .prose-section ul li{position:relative;padding-left:1.25rem;margin-bottom:.4rem}
-.prose-section ul li::before{content:'';position:absolute;left:0;top:.65rem;width:6px;height:6px;background:#34663f;border-radius:50%}
-.toc-link{display:block;padding:.35rem .75rem;border-radius:.5rem;font-size:.875rem;color:#4f6788;transition:all .2s}
-.toc-link:hover,.toc-link.active{background:#34663f10;color:#34663f;font-weight:500}
+.prose-section ul li::before{content:'';position:absolute;left:0;top:.65rem;width:6px;height:6px;background:#1cbfa5;border-radius:50%}
+.toc-link{display:block;padding:.35rem .75rem;border-radius:.5rem;font-size:.875rem;color:#486581;transition:all .2s}
+.toc-link:hover,.toc-link.active{background:#1cbfa510;color:#1cbfa5;font-weight:500}
 </style>
 </head>
 <body class="bg-white text-navy-900 antialiased">
@@ -41,7 +41,7 @@ tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d619
 <a href="terms-of-service.html" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors">Terms of Service</a>
 </div>
 <div class="hidden lg:flex items-center gap-3">
-<a href="http://localhost:8081" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors border border-navy-200 px-5 py-2.5 rounded-lg hover:border-accent">Sign In</a>
+<a href="/app/" class="text-sm font-medium text-navy-600 hover:text-accent transition-colors border border-navy-200 px-5 py-2.5 rounded-lg hover:border-accent">Sign In</a>
 <a href="index.html#demo" class="inline-flex items-center gap-2 bg-gradient-to-r from-accent to-accent-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:-translate-y-0.5 transition-transform shadow-sm">Book a Demo</a>
 </div>
 <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-navy-50 transition-colors">
@@ -54,7 +54,7 @@ tailwind.config={theme:{extend:{colors:{primary:{DEFAULT:'#1a4770',light:'#2d619
 <a href="index.html#features" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Features</a>
 <a href="index.html#benefits" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Benefits</a>
 <a href="terms-of-service.html" class="block py-2 text-sm font-medium text-navy-700 hover:text-accent">Terms of Service</a>
-<a href="http://localhost:8081" class="block text-center text-sm font-medium text-navy-700 hover:text-accent border border-navy-200 px-6 py-3 rounded-lg mt-2">Sign In</a>
+<a href="/app/" class="block text-center text-sm font-medium text-navy-700 hover:text-accent border border-navy-200 px-6 py-3 rounded-lg mt-2">Sign In</a>
 <a href="index.html#demo" class="block bg-gradient-to-r from-accent to-accent-dark text-white text-center px-6 py-3 rounded-lg text-sm font-semibold mt-2">Book a Demo</a>
 </div>
 </div>

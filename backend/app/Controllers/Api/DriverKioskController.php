@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Services\DriverKioskService;
 use App\Services\AcademicSessionService;
+use App\Services\LedgerService;
 use CodeIgniter\Database\Config;
 
 /**
@@ -149,7 +150,6 @@ class DriverKioskController extends BaseApiController
         }
 
         $staffId      = $staff['id'];
-        $academicYear = $this->sessionService->getCurrentSession($tenantId);
 
         // Verify route belongs to this driver via transport_route_periods.
         // driver_staff_id was dropped from transport_routes in migration 100003.
@@ -203,11 +203,26 @@ class DriverKioskController extends BaseApiController
 
         $studentIds = array_column($rows, 'id');
 
-        $paymentStatusMap = $this->kioskService->getStudentsPaymentStatus(
-            $studentIds,
-            $tenantId,
-            $academicYear
-        );
+        $balanceMap = [];
+        $statusMap  = [];
+        $paidCount  = 0;
+
+        if (!empty($studentIds)) {
+            $ledgerService = new LedgerService($this->db);
+            $balanceMap    = $ledgerService->getBalancesForStudentIds($studentIds, $tenantId);
+
+            foreach ($studentIds as $sid) {
+                $ledger = $balanceMap[$sid] ?? null;
+                $transportBalance = is_array($ledger) && array_key_exists('transportBalance', $ledger)
+                    ? (float) $ledger['transportBalance']
+                    : null;
+
+                $statusMap[$sid] = ($transportBalance !== null && $transportBalance <= 0) ? 'paid' : 'unpaid';
+                if ($statusMap[$sid] === 'paid') {
+                    $paidCount++;
+                }
+            }
+        }
 
         // Resolve bus name from route period
         $period = $this->db->table('transport_route_periods rp')
@@ -226,12 +241,16 @@ class DriverKioskController extends BaseApiController
 
         $studentList = [];
         foreach ($rows as $s) {
-            $status = $paymentStatusMap[$s['id']] ?? 'unpaid';
+            $studentId = $s['id'];
+            $ledger    = $balanceMap[$studentId] ?? null;
+            $status    = $statusMap[$studentId] ?? 'unpaid';
+
             if ($paidOnly && $status !== 'paid') {
                 continue;
             }
+
             $studentList[] = [
-                'id'        => $s['id'],
+                'id'        => $studentId,
                 'firstName' => $s['first_name'],
                 'lastName'  => $s['last_name'],
                 'stop'      => $s['stop_id'] ? [
@@ -239,14 +258,14 @@ class DriverKioskController extends BaseApiController
                     'name'       => $s['stop_name'],
                     'pickupTime' => $s['stop_pickup_time'] ?? null,
                 ] : null,
-                'direction'     => $s['direction'] ?? 'both',
-                'notes'         => $s['notes'] ?? null,
-                'paymentStatus' => $status,
+                'direction'       => $s['direction'] ?? 'both',
+                'notes'           => $s['notes'] ?? null,
+                'paymentStatus'    => $status,
+                'transportBalance' => is_array($ledger) && array_key_exists('transportBalance', $ledger) ? (float) $ledger['transportBalance'] : null,
             ];
         }
 
         $totalCount  = count($rows);
-        $paidCount   = count(array_filter($paymentStatusMap, fn($v) => $v === 'paid'));
         $unpaidCount = $totalCount - $paidCount;
 
         return $this->success([

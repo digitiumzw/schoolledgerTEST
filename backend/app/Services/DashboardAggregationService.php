@@ -6,6 +6,16 @@ use App\Models\DashboardKpiMetricModel;
 use Config\Database;
 use App\Services\LedgerService;
 
+/**
+ * DashboardAggregationService — Pre-aggregated KPI metrics for dashboard display.
+ *
+ * Feature 094 (Multi-Currency): All SUM(amount) queries on charges/payments
+ * in this service automatically aggregate in the tenant's base currency because
+ * the `amount` column always holds the base-currency equivalent (computed
+ * immutably at transaction creation by CurrencyService). No conversion logic
+ * is needed here — the same principle as LedgerService applies. See the
+ * LedgerService class docblock for the full multi-currency design rationale.
+ */
 class DashboardAggregationService
 {
     private DashboardKpiMetricModel $metricModel;

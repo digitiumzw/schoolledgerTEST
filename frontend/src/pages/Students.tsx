@@ -580,7 +580,7 @@ export default function Students() {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Students</h1>
           <p className="text-muted-foreground">Manage student records and information</p>
         </div>
-        <ContextualHelpLink sectionId="class-management" label="Student Management Help" />
+        <ContextualHelpLink sectionId="student-management" label="Student Management Help" />
         <div className="flex flex-col sm:flex-row gap-2">
           <Button variant="ghost" size="sm" onClick={() => setOnboardingOpen(true)} className="hidden sm:flex">
             <HelpCircle className="h-4 w-4 mr-2" />

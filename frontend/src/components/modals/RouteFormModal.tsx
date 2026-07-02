@@ -66,7 +66,9 @@ export function RouteFormModal({ open, onOpenChange, onSuccess, mode, route }: R
       }
 
       if (formData.vehicleId) {
-        const periodPayload = { vehicleId: formData.vehicleId, driverId: formData.driverId || undefined };
+        // Send null (not undefined) when no driver is selected so the
+        // backend can distinguish "remove driver" from "no change".
+        const periodPayload = { vehicleId: formData.vehicleId, driverId: formData.driverId || null };
         const existingPeriodId = mode === "edit" ? route?.periodId : null;
         if (existingPeriodId) {
           await api.updateRoutePeriod(existingPeriodId, periodPayload);

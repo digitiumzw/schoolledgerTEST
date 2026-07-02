@@ -45,6 +45,21 @@ export default function StudentRosterItem({
           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
             {DIRECTION_LABELS[student.direction] ?? student.direction}
           </span>
+          {student.transportBalance !== null && (
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                student.transportBalance > 0
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-emerald-100 text-emerald-700"
+              }`}
+            >
+              {student.transportBalance > 0
+                ? `Transport Balance: $${student.transportBalance.toFixed(2)} due`
+                : student.transportBalance < 0
+                  ? `Transport Balance: $${Math.abs(student.transportBalance).toFixed(2)} credit`
+                  : "Transport Balance: cleared"}
+            </span>
+          )}
         </div>
 
         {student.stop ? (

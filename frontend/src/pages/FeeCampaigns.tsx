@@ -185,7 +185,7 @@ export default function FeeCampaigns() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ContextualHelpLink sectionId="billing-workflow" label="Billing Workflow Help" />
+          <ContextualHelpLink sectionId="fee-campaigns" label="Fee Campaigns Help" />
           <Button variant="ghost" size="sm" onClick={() => setOnboardingOpen(true)} className="hidden sm:flex">
             <HelpCircle className="h-4 w-4 mr-2" />
             Campaign guide

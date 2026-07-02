@@ -259,6 +259,30 @@ export function ReceiptDocument({ data, receiptUrl }: ReceiptDocumentProps) {
         </span>
       </div>
 
+      {/* Multi-currency detail block (Feature 094) */}
+      {payment.currencyCode && payment.originalAmount != null && payment.exchangeRate != null && (
+        <div style={{
+          marginBottom: "16px",
+          padding: "8px 12px",
+          backgroundColor: "#f9fafb",
+          borderRadius: "6px",
+          border: "1px solid #e5e7eb",
+          fontSize: "11px",
+          color: "#6b7280",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
+          <span>
+            Paid in {payment.currencyCode}: <strong>{payment.originalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+          </span>
+          <span>
+            Rate: 1 base = {payment.exchangeRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })} {payment.currencyCode}
+            {payment.rateManualOverride && " (manual)"}
+          </span>
+        </div>
+      )}
+
       {/* Balance snapshot at the moment this payment was recorded */}
       {!isBalanceCleared && (showFeeBalance || showTransportBalance || (balance !== null && balance !== 0)) && (
         <div style={{ marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>

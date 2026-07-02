@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { HelpTopic as HelpTopicType } from '@/types/help';
 import type { User } from '@/types/auth';
 import ScreenshotPlaceholder from './ScreenshotPlaceholder';
-import { Lightbulb, Circle } from 'lucide-react';
+import { Lightbulb, Circle, AlertTriangle, Info, ListChecks, HelpCircle, ArrowUpRight } from 'lucide-react';
 
 interface HelpTopicProps {
   topic: HelpTopicType;
@@ -55,10 +55,35 @@ export default function HelpTopicComponent({ topic, searchQuery, user }: HelpTop
       )}
     >
       {/* Topic title */}
-      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 flex items-start gap-2">
+      <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2 flex items-start gap-2">
         <Circle className="h-2 w-2 mt-2.5 shrink-0 fill-primary text-primary" />
         <HighlightText text={topic.title} query={searchQuery} />
       </h3>
+
+      {/* Summary */}
+      {topic.summary && (
+        <p className="mb-4 pl-4 text-sm text-muted-foreground leading-relaxed">
+          <HighlightText text={replacePlaceholders(topic.summary, user)} query={searchQuery} />
+        </p>
+      )}
+
+      {/* Prerequisites */}
+      {topic.prerequisites && topic.prerequisites.length > 0 && (
+        <div className="mb-5 rounded-lg border border-border bg-muted/40 p-4">
+          <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-foreground">
+            <ListChecks className="h-4 w-4 shrink-0 text-primary" />
+            Before you start
+          </div>
+          <ul className="space-y-1.5 pl-1">
+            {topic.prerequisites.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary/60" />
+                <span>{replacePlaceholders(item, user)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Steps timeline */}
       <ol className="relative list-none">
@@ -103,6 +128,83 @@ export default function HelpTopicComponent({ topic, searchQuery, user }: HelpTop
           );
         })}
       </ol>
+
+      {/* Warnings — critical / irreversible cautions */}
+      {topic.warnings && topic.warnings.length > 0 && (
+        <div className="mt-5 rounded-lg border-l-4 border-red-500 bg-red-50/60 dark:bg-red-950/20 p-4">
+          <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-red-800 dark:text-red-300">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            Important warnings
+          </div>
+          <ul className="space-y-1.5 pl-1">
+            {topic.warnings.map((warning, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-red-900/90 dark:text-red-200/90 leading-relaxed">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-red-500" />
+                <span>{replacePlaceholders(warning, user)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Notes — helpful notes, limitations, best practices */}
+      {topic.notes && topic.notes.length > 0 && (
+        <div className="mt-5 rounded-lg border-l-4 border-blue-400 bg-blue-50/60 dark:bg-blue-950/20 p-4">
+          <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-blue-800 dark:text-blue-300">
+            <Info className="h-4 w-4 shrink-0" />
+            Notes &amp; best practices
+          </div>
+          <ul className="space-y-1.5 pl-1">
+            {topic.notes.map((note, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-blue-900/90 dark:text-blue-200/90 leading-relaxed">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-blue-400" />
+                <span>{replacePlaceholders(note, user)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* FAQs */}
+      {topic.faqs && topic.faqs.length > 0 && (
+        <div className="mt-5 pt-5 border-t border-dashed border-border/60">
+          <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-foreground">
+            <HelpCircle className="h-4 w-4 shrink-0 text-primary" />
+            Frequently asked questions
+          </div>
+          <dl className="space-y-3">
+            {topic.faqs.map((faq, i) => (
+              <div key={i} className="rounded-lg bg-muted/40 p-3">
+                <dt className="text-sm font-medium text-foreground">
+                  <HighlightText text={faq.question} query={searchQuery} />
+                </dt>
+                <dd className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  <HighlightText text={replacePlaceholders(faq.answer, user)} query={searchQuery} />
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {/* Related topics — cross-links */}
+      {topic.related && topic.related.length > 0 && (
+        <div className="mt-5 pt-5 border-t border-dashed border-border/60">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Related topics</p>
+          <div className="flex flex-wrap gap-2">
+            {topic.related.map((link) => (
+              <a
+                key={link.topicId}
+                href={`#${link.topicId}`}
+                className="inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+              >
+                {link.label}
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {topic.screenshotCaption && (
         <div className="mt-5 pt-5 border-t border-dashed border-border/60">

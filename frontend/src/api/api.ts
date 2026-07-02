@@ -2,8 +2,8 @@
 // API SERVICE — Production-grade HTTP client for the CodeIgniter 4 backend
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { DashboardStats, ImportExecuteResult, ImportValidationResult, SetupGuideResponse, SetupGuideStepKey, SetupGuideStepStatus, TutorialResponse, TutorialStatus, TenantDeletionStatus, DeletionRequestInput, DeletionRequestResponse, UndoDeletionInput, UndoDeletionResponse, StaffListParams, StaffListResponse, TransportListParams, PaginatedResponse, TransportRoute, RouteStudentsParams, PaginatedRouteStudentsResponse } from '@/types/dashboard';
-export type { StaffListParams, StaffListResponse, TransportListParams, PaginatedResponse, RouteStudentsParams, PaginatedRouteStudentsResponse };
+import type { DashboardStats, ImportExecuteResult, ImportValidationResult, SetupGuideResponse, SetupGuideStepKey, SetupGuideStepStatus, TutorialResponse, TutorialStatus, TenantDeletionStatus, DeletionRequestInput, DeletionRequestResponse, UndoDeletionInput, UndoDeletionResponse, StaffListParams, StaffListResponse, TransportListParams, PaginatedResponse, TransportRoute, RouteStudentsParams, PaginatedRouteStudentsResponse, CurrencyConfiguration, ExchangeRate, ExchangeRateLookupResult } from '@/types/dashboard';
+export type { StaffListParams, StaffListResponse, TransportListParams, PaginatedResponse, RouteStudentsParams, PaginatedRouteStudentsResponse, CurrencyConfiguration, ExchangeRate, ExchangeRateLookupResult };
 
 // ── Academic calendar error codes ─────────────────────────────────────────────
 export type ChargeGenerationErrorCode =
@@ -261,6 +261,7 @@ export interface FinancialReportFilterParams {
   classId?: string;
   method?: string;
   category?: string;
+  reportingCurrency?: string;
 }
 
 export interface PaymentStudentDisplay {
@@ -289,6 +290,10 @@ export interface PaymentHistoryRecord {
   receiptNumber?: string | null;
   isGeneralPayment?: boolean;
   paymentGroupId?: string | null;
+  currencyCode?: string | null;
+  originalAmount?: number | null;
+  exchangeRate?: number | null;
+  rateManualOverride?: boolean;
   student?: PaymentStudentDisplay | null;
 }
 
@@ -905,6 +910,8 @@ export interface FeeRuleBillingMeta {
 export interface FeeRuleGenerateInput {
   billingPeriod: string;
   feeRuleIds?: string[];
+  currency?: string;
+  exchangeRateOverride?: number;
 }
 
 export interface FeeRuleGenerationResult {
@@ -1060,6 +1067,8 @@ export interface MultiCategoryPaymentInput {
   method: string;
   description?: string;
   categories: Array<{ categoryName: string; amount: number }>;
+  currency?: string;
+  exchangeRateOverride?: number;
 }
 
 /**
@@ -2002,6 +2011,7 @@ export const api = {
     if (params.classId && params.classId !== 'all') searchParams.append('classId', params.classId);
     if (params.method && params.method !== 'all') searchParams.append('method', params.method);
     if (params.category && params.category !== 'all' && params.category !== 'none') searchParams.append('category', params.category);
+    if (params.reportingCurrency) searchParams.append('reportingCurrency', params.reportingCurrency);
     const qs = searchParams.toString();
     const token = localStorage.getItem('schoolledger_token');
     const response = await fetch(
@@ -2776,8 +2786,11 @@ export const api = {
     return response.data;
   },
 
-  generateTransportCharges: async (month: string) => {
-    const response = await apiRequest('/transport/generate-charges', { method: 'POST', body: JSON.stringify({ month }) });
+  generateTransportCharges: async (month: string, currency?: string, exchangeRateOverride?: number) => {
+    const response = await apiRequest('/transport/generate-charges', {
+      method: 'POST',
+      body: JSON.stringify({ month, ...(currency ? { currency, exchangeRateOverride } : {}) }),
+    });
     return response.data;
   },
   generateStudentTransportCharge: async (studentId: string, month?: string) => {
@@ -3276,6 +3289,49 @@ export const api = {
     return response.data;
   },
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CURRENCIES & EXCHANGE RATES (Feature 094)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  getCurrencyConfig: async (): Promise<CurrencyConfiguration> => {
+    const response = await apiRequest('/currencies');
+    return response.data as CurrencyConfiguration;
+  },
+
+  updateCurrencyConfig: async (data: { baseCurrency?: string; enabledCurrencies?: string[]; multiCurrencyEnabled?: boolean }): Promise<CurrencyConfiguration> => {
+    const response = await apiRequest('/currencies', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.data as CurrencyConfiguration;
+  },
+
+  getExchangeRates: async (currency: string): Promise<ExchangeRate[]> => {
+    const response = await apiRequest(`/exchange-rates?currency=${encodeURIComponent(currency)}`);
+    return response.data as ExchangeRate[];
+  },
+
+  lookupExchangeRate: async (currency: string, date: string): Promise<ExchangeRateLookupResult> => {
+    const response = await apiRequest(`/exchange-rates/lookup?currency=${encodeURIComponent(currency)}&date=${encodeURIComponent(date)}`);
+    return response.data as ExchangeRateLookupResult;
+  },
+
+  createExchangeRate: async (data: { currency: string; rateToBase: number; effectiveDate: string }): Promise<ExchangeRate> => {
+    const response = await apiRequest('/exchange-rates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.data as ExchangeRate;
+  },
+
+  updateExchangeRate: async (id: string, data: { rateToBase: number }): Promise<ExchangeRate> => {
+    const response = await apiRequest(`/exchange-rates/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.data as ExchangeRate;
+  },
+
 };
 
 // Export token and tenant helpers for use elsewhere
@@ -3500,6 +3556,7 @@ export interface DriverKioskStudent {
   direction: 'both' | 'inbound' | 'outbound';
   notes: string | null;
   paymentStatus: 'paid' | 'unpaid';
+  transportBalance: number | null;
 }
 
 export interface DriverKioskRosterResponse {

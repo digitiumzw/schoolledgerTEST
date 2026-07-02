@@ -15,7 +15,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { formatCurrency } from "@/lib/studentUtils";
+import { formatCurrency, formatCurrencyForCode } from "@/lib/studentUtils";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
 import { ChevronLeft, ChevronRight, Printer, Receipt } from "lucide-react";
 import { PrintReceiptModal } from "./PrintReceiptModal";
 
@@ -37,6 +38,8 @@ export function PaymentHistoryModal({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [receiptPaymentId, setReceiptPaymentId] = useState<string | null>(null);
+  const { data: currencyConfig } = useCurrencyConfig();
+  const baseCurrency = currencyConfig?.baseCurrency ?? 'USD';
 
   useEffect(() => {
     if (student && open) {
@@ -251,7 +254,16 @@ export function PaymentHistoryModal({
                             {format(new Date(payment.date), "MMM dd, yyyy")}
                           </TableCell>
                           <TableCell className="text-primary font-semibold whitespace-nowrap">
-                            {formatCurrency(payment.amount)}
+                            {payment.currencyCode && payment.originalAmount != null && payment.currencyCode !== baseCurrency ? (
+                              <div className="flex flex-col">
+                                <span>{formatCurrencyForCode(payment.originalAmount, payment.currencyCode)}</span>
+                                <span className="text-xs font-normal text-muted-foreground">
+                                  ≈ {formatCurrencyForCode(payment.amount, baseCurrency)}
+                                </span>
+                              </div>
+                            ) : (
+                              formatCurrencyForCode(payment.amount, baseCurrency)
+                            )}
                           </TableCell>
                           <TableCell>
                             <Badge variant="secondary">{payment.method}</Badge>

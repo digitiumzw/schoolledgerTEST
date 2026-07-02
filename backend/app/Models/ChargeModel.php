@@ -22,7 +22,8 @@ class ChargeModel extends Model
         'description', 'generation_batch_id', 'created_by', 'deleted_at', 
         'deletion_reason', 'created_at', 'updated_at', 'route_id', 'term_id',
         'billing_run_id', 'academic_year', 'fee_rule_id', 'billing_period', 'voided_at',
-        'voided_by'
+        'voided_by',
+        'currency_code', 'original_amount', 'exchange_rate', 'rate_manual_override',
     ];
     protected $useTimestamps = true;
     protected $useSoftDeletes = true;
@@ -215,6 +216,10 @@ class ChargeModel extends Model
             'routeId'           => $charge['route_id'] ?? null,
             'feeRuleId'         => $charge['fee_rule_id'] ?? null,
             'billingPeriod'     => $charge['billing_period'] ?? null,
+            'currencyCode'      => $charge['currency_code'] ?? null,
+            'originalAmount'    => isset($charge['original_amount']) ? (float) $charge['original_amount'] : null,
+            'exchangeRate'      => isset($charge['exchange_rate']) ? (float) $charge['exchange_rate'] : null,
+            'rateManualOverride' => isset($charge['rate_manual_override']) ? (bool) $charge['rate_manual_override'] : false,
         ];
     }
 

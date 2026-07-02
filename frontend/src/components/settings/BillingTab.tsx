@@ -36,6 +36,8 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "@/api/api";
 import { useFeeRules } from "@/hooks/useFeeRules";
 import { useChargeBatchRollback } from "@/hooks/useChargeBatchRollback";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FeeRuleGenerationPanel } from "./FeeRuleGenerationPanel";
 
 type TransportGenerationResult = {
@@ -84,6 +86,10 @@ export function BillingTab() {
   const [transportRollbackOpen, setTransportRollbackOpen] = useState(false);
   const [transportRollbackReason, setTransportRollbackReason] = useState("");
 
+  // Multi-currency (Feature 094)
+  const { data: currencyConfig } = useCurrencyConfig();
+  const [transportCurrency, setTransportCurrency] = useState<string>('');
+
   const [workflowOpen, setWorkflowOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
@@ -120,7 +126,10 @@ export function BillingTab() {
     setTransportRunning(true);
     setTransportResult(null);
     try {
-      const result = await api.generateTransportCharges(transportMonth);
+      const result = await api.generateTransportCharges(
+        transportMonth,
+        transportCurrency && transportCurrency !== currencyConfig?.baseCurrency ? transportCurrency : undefined,
+      );
       setTransportResult(result);
       toast({
         title: "Transport charges generated",
@@ -197,6 +206,25 @@ export function BillingTab() {
                   Select the month you want to bill. Students already charged for this month are skipped — safe to re-run.
                 </p>
               </div>
+
+              {/* Multi-currency selector (Feature 094) */}
+              {currencyConfig && currencyConfig.enabledCurrencies.length > 1 && (
+                <div className="space-y-1 max-w-[180px]">
+                  <Label className="text-xs">Currency</Label>
+                  <Select value={transportCurrency || currencyConfig.baseCurrency} onValueChange={setTransportCurrency} disabled={transportRunning}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencyConfig.enabledCurrencies.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}{c === currencyConfig.baseCurrency ? ' (base)' : ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="grid gap-2 sm:grid-cols-2">
                 <Button

@@ -307,7 +307,7 @@ const App = () => {
           <SessionExpirationHandler />
 
           {/* LAYER 5: Router - handles URLs and navigation */}
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             {/* Define all routes (URL patterns) */}
             <Routes>
               {/* ==================== PUBLIC ROUTES ==================== */}

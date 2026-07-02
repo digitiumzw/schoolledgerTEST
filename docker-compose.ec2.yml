@@ -1,0 +1,120 @@
+# ════════════════════════════════════════════════════════════════════
+# SchoolLedger — EC2 Production (pre-built images from GHCR)
+# Use this on the EC2 server. No building happens here.
+# Images are built by GitHub Actions and pushed to GHCR.
+# ════════════════════════════════════════════════════════════════════
+services:
+  # ─── MySQL Database (tuned for t2.micro) ─────────────────────────
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/low-memory.cnf:/etc/mysql/conf.d/low-memory.cnf:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    mem_limit: 400m
+    networks:
+      - schoolledger
+
+  # ─── Backend (pre-built from GHCR) ───────────────────────────────
+  backend:
+    image: ghcr.io/jwhande57/schoolledger-backend:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CI_ENVIRONMENT: ${CI_ENVIRONMENT:-production}
+      app.baseURL: "http://localhost/"
+      app.forceGlobalSecureRequests: ${app.forceGlobalSecureRequests:-false}
+      app.CSPEnabled: ${app.CSPEnabled:-false}
+      SITE_URL: ${SITE_URL}
+      database.default.hostname: db
+      database.default.database: ${MYSQL_DATABASE}
+      database.default.username: ${MYSQL_USER}
+      database.default.password: ${MYSQL_PASSWORD}
+      database.default.DBDriver: MySQLi
+      database.default.port: 3306
+      database.default.charset: utf8mb4
+      database.default.DBCollat: utf8mb4_unicode_ci
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_TIME_TO_LIVE: ${JWT_TIME_TO_LIVE:-7200}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_PLATFORM_TOKEN_LIFETIME: ${JWT_PLATFORM_TOKEN_LIFETIME:-3600}
+      JWT_PLATFORM_SECRET_KEY: ${JWT_PLATFORM_SECRET_KEY}
+      encryption.key: ${ENCRYPTION_KEY}
+      PAYNOW_INTEGRATION_ID: ${PAYNOW_INTEGRATION_ID}
+      PAYNOW_INTEGRATION_KEY: ${PAYNOW_INTEGRATION_KEY}
+      PAYNOW_RESULT_URL: ${PAYNOW_RESULT_URL}
+      PAYNOW_RETURN_URL: ${PAYNOW_RETURN_URL}
+      SUBSCRIPTION_CURRENCY: ${SUBSCRIPTION_CURRENCY:-USD}
+      email.protocol: ${email.protocol:-smtp}
+      email.SMTPHost: ${email.SMTPHost}
+      email.SMTPPort: ${email.SMTPPort:-587}
+      email.SMTPCrypto: ${email.SMTPCrypto:-tls}
+      email.fromEmail: ${email.fromEmail}
+      email.fromName: ${email.fromName:-SchoolLedger}
+      email.SMTPUser: ${email.SMTPUser}
+      email.SMTPPass: ${email.SMTPPass}
+      PLATFORM_URL: ${PLATFORM_URL}
+      RATE_LIMITER_UNAUTHENTICATED_LIMIT: ${RATE_LIMITER_UNAUTHENTICATED_LIMIT:-60}
+      RATE_LIMITER_AUTHENTICATED_LIMIT: ${RATE_LIMITER_AUTHENTICATED_LIMIT:-120}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-1}
+    volumes:
+      - backend_writable:/var/www/html/writable
+    mem_limit: 256m
+    networks:
+      - schoolledger
+
+  # ─── Frontend (pre-built from GHCR) ──────────────────────────────
+  frontend:
+    image: ghcr.io/jwhande57/schoolledger-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      - backend
+    mem_limit: 64m
+    networks:
+      - schoolledger
+
+  # ─── Landing Page (pre-built from GHCR) ──────────────────────────
+  landing:
+    image: ghcr.io/jwhande57/schoolledger-landing:latest
+    restart: unless-stopped
+    mem_limit: 32m
+    networks:
+      - schoolledger
+
+  # ─── Nginx Reverse Proxy ─────────────────────────────────────────
+  nginx-proxy:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+      - landing
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    mem_limit: 32m
+    networks:
+      - schoolledger
+
+volumes:
+  db_data:
+  backend_writable:
+
+networks:
+  schoolledger:
+    driver: bridge

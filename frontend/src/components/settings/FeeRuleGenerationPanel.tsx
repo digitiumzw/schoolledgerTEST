@@ -47,6 +47,7 @@ import {
 import { FeeRuleGenerationResult } from "@/api/api";
 import { UseFeeRulesResult } from "@/hooks/useFeeRules";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
 
 interface FeeRuleGenerationPanelProps {
   feeRules: UseFeeRulesResult;
@@ -63,6 +64,9 @@ export function FeeRuleGenerationPanel({ feeRules }: FeeRuleGenerationPanelProps
   const { user } = useAuth();
   const canGenerate =
     user?.role === "admin" || user?.role === "super_admin" || user?.role === "bursar";
+
+  const { data: currencyConfig } = useCurrencyConfig();
+  const [genCurrency, setGenCurrency] = useState<string>('');
 
   const {
     rules,
@@ -105,7 +109,10 @@ export function FeeRuleGenerationPanel({ feeRules }: FeeRuleGenerationPanelProps
   const handleGenerate = async () => {
     setConfirmOpen(false);
     if (!period) return;
-    const result = await generate({ billingPeriod: period });
+    const result = await generate({
+      billingPeriod: period,
+      ...(genCurrency && genCurrency !== currencyConfig?.baseCurrency ? { currency: genCurrency } : {}),
+    });
     if (result) setLastResult(result);
   };
 
@@ -173,6 +180,25 @@ export function FeeRuleGenerationPanel({ feeRules }: FeeRuleGenerationPanelProps
               {billingMeta && " · change this under Tuition Structure → Billing Configuration"}
             </p>
           </div>
+
+          {/* Multi-currency selector (Feature 094) */}
+          {currencyConfig && currencyConfig.enabledCurrencies.length > 1 && (
+            <div className="space-y-1 max-w-[180px]">
+              <Label className="text-xs">Currency</Label>
+              <Select value={genCurrency || currencyConfig.baseCurrency} onValueChange={setGenCurrency} disabled={generating}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencyConfig.enabledCurrencies.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}{c === currencyConfig.baseCurrency ? ' (base)' : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button

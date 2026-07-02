@@ -5,6 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // In production the SPA is served at /app/ behind the reverse proxy.
+  // In development the default "/" base is used.
+  base: mode === "production" ? "/app/" : "/",
   server: {
     host: "::",
     port: 8080,

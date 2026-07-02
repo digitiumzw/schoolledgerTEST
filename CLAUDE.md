@@ -115,10 +115,11 @@ database.default.password = <pass>
 Frontend API base URL is hardcoded in `src/api/api.ts` as `http://localhost:8080/api`. Change this for different environments.
 
 ## Recent Changes
+- 094-multicurrency-support: Multi-currency financial system — new exchange_rates table, CurrencyService, CurrencyController, additive currency columns on charges/payments, exchange rate management UI, multi-currency payment/charge recording, reporting currency support. PHP 8.1+ / CodeIgniter 4 / MySQL (backend) · React 18 / TypeScript / TanStack React Query / shadcn/ui (frontend)
+- 093-print-student-profile: Added PHP 8.1+ (backend, unchanged) · TypeScript 5.x / React 18 (frontend, primary surface) + CodeIgniter 4, MySQL (backend, unchanged) · Vite, TailwindCSS, shadcn/ui, TanStack React Query, lucide-react (frontend)
 - 078-account-deletion-request: Added PHP 8.1+, React 18, TypeScript + CodeIgniter 4, MySQL, TanStack React Query, Axios, TailwindCSS, shadcn/ui
 - 057-payment-billing-ux: Added PHP 8.1 (backend) · TypeScript 5 / React 18 (frontend) + CodeIgniter 4 (backend) · Vite + React Query + shadcn/ui + TailwindCSS (frontend)
-- 049-student-status-filtering: Added PHP 8.1+ (backend) · TypeScript / React 18 (frontend) + CodeIgniter 4 · MySQL (backend) · Vite, TanStack React Query, shadcn/ui, React Hook Form + Zod (frontend)
 
 ## Active Technologies
-- PHP 8.1+, React 18, TypeScript + CodeIgniter 4, MySQL, TanStack React Query, Axios, TailwindCSS, shadcn/ui (078-account-deletion-request)
-- MySQL with tenant-scoped tables (all tables have tenant_id foreign key) (078-account-deletion-request)
+- PHP 8.1+ (backend, unchanged) · TypeScript 5.x / React 18 (frontend, primary surface) + CodeIgniter 4, MySQL (backend, unchanged) · Vite, TailwindCSS, shadcn/ui, TanStack React Query, lucide-react (frontend) (094-multicurrency-support)
+- MySQL — new exchange_rates table + additive nullable currency columns on charges/payments (094-multicurrency-support)

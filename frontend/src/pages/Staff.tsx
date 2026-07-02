@@ -238,7 +238,7 @@ export default function StaffPage() {
             <p className="text-muted-foreground">Manage teaching and non-teaching staff</p>
           </div>
           <div className="flex items-center gap-2">
-            <ContextualHelpLink sectionId="user-role-management" label="User Management Help" />
+            <ContextualHelpLink sectionId="staff-management" label="Staff Management Help" />
             <Button variant="ghost" size="sm" onClick={() => setOnboardingOpen(true)} className="hidden sm:flex">
             <HelpCircle className="h-4 w-4 mr-2" />
             Staff guide

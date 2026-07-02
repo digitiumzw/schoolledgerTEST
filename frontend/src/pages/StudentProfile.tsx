@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { SubscriptionGuard } from "@/components/subscription/SubscriptionGuard";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "@/api/api";
@@ -28,12 +29,15 @@ import { StudentCampaignsCard } from "@/components/StudentCampaignsCard";
 import {
   ArrowLeft, Pencil, DollarSign, Mail, Phone, MapPin, Calendar, User,
   Bus, Receipt, History, AlertCircle, CheckCircle2, Clock, TrendingDown,
-  BookOpen, ClipboardCheck, ChevronDown, ChevronRight
+  BookOpen, ClipboardCheck, ChevronDown, ChevronRight, Printer, Loader2
 } from "lucide-react";
 import {
-  calculateAge, formatPhoneNumber, getStatusColor, formatCurrency
+  calculateAge, formatPhoneNumber, getStatusColor, formatCurrency, formatCurrencyForCode
 } from "@/lib/studentUtils";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
 import { formatTransportFee } from "@/lib/transportUtils";
+import { useStudentPrintData } from "@/pages/StudentProfile/hooks/useStudentPrintData";
+import { StudentProfilePrintDocument } from "@/pages/StudentProfile/StudentProfilePrintDocument";
 import { cn } from "@/lib/utils";
 
 // ─── Local Types ─────────────────────────────────────────────────────────────
@@ -60,6 +64,10 @@ interface PaymentRow {
   category: string;
   description: string;
   routeId: string | null;
+  currencyCode?: string | null;
+  originalAmount?: number | null;
+  exchangeRate?: number | null;
+  rateManualOverride?: boolean;
 }
 
 interface TermBreakdown {
@@ -345,6 +353,8 @@ function StatusHistoryTab({ statusHistory }: { statusHistory: StatusHistoryEntry
 export default function StudentProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { data: currencyConfig } = useCurrencyConfig();
+  const baseCurrency = currencyConfig?.baseCurrency ?? 'USD';
 
   // Core profile data
   const [student, setStudent] = useState<Student | null>(null);
@@ -558,6 +568,21 @@ export default function StudentProfile() {
     if (activeTab === "timeline") fetchTimeline();
   };
 
+  const { isPreparing, handlePrint, printData } = useStudentPrintData({
+    studentId: id ?? '',
+    student,
+    feeStatement,
+    timeline,
+    attendanceSummary,
+    transportAssignment,
+    transportRoute,
+    currentEnrollment,
+    className: classInfo?.name ?? null,
+    teacherName: teacherName !== 'Unassigned' ? teacherName : null,
+    classStudentCount,
+    balanceData,
+  });
+
   // ── Loading skeleton ────────────────────────────────────────────────────────
 
   if (loading) {
@@ -609,9 +634,9 @@ export default function StudentProfile() {
   const transportBalance = feeStatement?.summary.transportBalance ?? balanceData?.transportBalance ?? 0;
 
   return (
+    <>
     <SubscriptionGuard>
     <div className="space-y-6">
-
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -624,6 +649,18 @@ export default function StudentProfile() {
           </div>
         </div>
         <div className="flex gap-2 pl-12 sm:pl-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrint}
+            disabled={isPreparing || loading}
+            className="flex-1 sm:flex-none print:hidden"
+          >
+            {isPreparing
+              ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              : <Printer className="mr-2 h-4 w-4" />}
+            <span>{isPreparing ? 'Preparing…' : 'Print'}</span>
+          </Button>
           <Button variant="outline" size="sm" onClick={() => { setShowPaymentModal(true); }} className="flex-1 sm:flex-none">
             <DollarSign className="mr-2 h-4 w-4" />
             <span>Record Payment</span>
@@ -1182,7 +1219,16 @@ export default function StudentProfile() {
                                   {payment.description || "-"}
                                 </TableCell>
                                 <TableCell className="text-right font-semibold text-sm text-green-600 dark:text-green-400">
-                                  {formatCurrency(payment.amount)}
+                                  {payment.currencyCode && payment.originalAmount != null && payment.currencyCode !== baseCurrency ? (
+                                    <div className="flex flex-col items-end">
+                                      <span>{formatCurrencyForCode(payment.originalAmount, payment.currencyCode)}</span>
+                                      <span className="text-xs font-normal text-muted-foreground">
+                                        ≈ {formatCurrencyForCode(payment.amount, baseCurrency)}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    formatCurrencyForCode(payment.amount, baseCurrency)
+                                  )}
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -1294,6 +1340,11 @@ export default function StudentProfile() {
                                 </TableCell>
                                 <TableCell className="text-right font-semibold text-sm">
                                   {formatCurrency(charge.amount)}
+                                  {charge.currencyCode && (
+                                    <span className="ml-1 text-xs text-muted-foreground" title={`Original: ${charge.originalAmount} ${charge.currencyCode} @ ${charge.exchangeRate}`}>
+                                      ({charge.currencyCode})
+                                    </span>
+                                  )}
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -1600,5 +1651,19 @@ export default function StudentProfile() {
       </Dialog>
     </div>
     </SubscriptionGuard>
+
+    {createPortal(
+      <div id="student-profile-print" className="hidden print-only">
+        <style>{`
+          @media print {
+            body > *:not(#student-profile-print) { display: none !important; }
+            #student-profile-print { display: block !important; }
+          }
+        `}</style>
+        {printData && <StudentProfilePrintDocument data={printData} />}
+      </div>,
+      document.body
+    )}
+    </>
   );
 }

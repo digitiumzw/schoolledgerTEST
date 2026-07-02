@@ -1,0 +1,38 @@
+# MySQL 8.0 tuning for EC2 t2.micro (1GB RAM)
+# Minimal memory footprint configuration
+
+[mysqld]
+# Buffer pool — 128MB is the minimum reasonable value
+innodb_buffer_pool_size = 128M
+
+# Connection limits
+max_connections = 50
+max_user_connections = 40
+
+# Query cache removed in MySQL 8.0 — skip
+
+# Memory per connection
+sort_buffer_size = 256K
+read_buffer_size = 256K
+read_rnd_buffer_size = 256K
+join_buffer_size = 256K
+thread_stack = 192K
+
+# Temporary tables
+tmp_table_size = 16M
+max_heap_table_size = 16M
+
+# InnoDB settings
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 2
+
+# Performance schema — disable to save memory
+performance_schema = 0
+
+# Table definition cache
+table_open_cache = 200
+table_definition_cache = 200
+
+# Slow query log (useful for debugging)
+slow_query_log = 1
+long_query_time = 2

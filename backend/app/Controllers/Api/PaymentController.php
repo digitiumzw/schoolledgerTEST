@@ -5,12 +5,14 @@ namespace App\Controllers\Api;
 use App\Models\CampaignStudentModel;
 use App\Models\PaymentModel;
 use App\Models\StudentModel;
+use App\Services\CurrencyService;
 
 class PaymentController extends BaseApiController
 {
     protected PaymentModel $paymentModel;
     protected StudentModel $studentModel;
     protected CampaignStudentModel $campaignStudentModel;
+    protected CurrencyService $currencyService;
 
     private const VALID_METHODS     = ['Cash', 'EcoCash', 'OneMoney', 'Telecash', 'Bank Transfer', 'ZIPIT', 'Swipe', 'Cheque', 'Other'];
     private const MAX_PAYMENT_AMOUNT = 1_000_000; // sanity ceiling
@@ -22,6 +24,7 @@ class PaymentController extends BaseApiController
         $this->paymentModel  = new PaymentModel();
         $this->studentModel  = new StudentModel();
         $this->campaignStudentModel = new CampaignStudentModel();
+        $this->currencyService = new CurrencyService();
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -228,9 +231,35 @@ class PaymentController extends BaseApiController
             return $this->error('Student not found or does not belong to your organisation', 404);
         }
 
+        // ── Multi-currency resolution (Feature 094) ────────────────
+        $currencyCode = isset($data['currency']) ? $this->sanitiseString($data['currency']) : null;
+        $exchangeRateOverride = isset($data['exchangeRateOverride']) ? (float) $data['exchangeRateOverride'] : null;
+        $currencyDetail = null;
+
+        if ($currencyCode && $currencyCode !== '') {
+            try {
+                $currencyDetail = $this->currencyService->resolveTransactionCurrency(
+                    $tenantId,
+                    $currencyCode,
+                    $date,
+                    $amount,
+                    $exchangeRateOverride
+                );
+                // The base-currency amount becomes the authoritative `amount` for ledger purposes
+                $amount = $currencyDetail['baseCurrencyAmount'];
+            } catch (\InvalidArgumentException $e) {
+                $code = (int) $e->getCode();
+                return $this->error($e->getMessage(), $code > 0 ? $code : 400);
+            } catch (\RuntimeException $e) {
+                $code = (int) $e->getCode();
+                return $this->error($e->getMessage(), $code > 0 ? $code : 422, ['requiresRate' => true]);
+            }
+        }
+
         // ── Multi-category path ────────────────────────────────────
         if (!empty($data['categories']) && is_array($data['categories'])) {
-            return $this->createMultiCategory($data, $student, $tenantId, $amount, $date, $method);
+            $originalTotal = $currencyDetail ? (float) ($currencyDetail['originalAmount'] ?? $amount) : $amount;
+            return $this->createMultiCategory($data, $student, $tenantId, $amount, $date, $method, $currencyDetail, $originalTotal);
         }
 
         // ── Single-category path ───────────────────────────────────
@@ -274,6 +303,10 @@ class PaymentController extends BaseApiController
             'receipt_number'     => $receiptNumber,
             'is_general_payment' => $isGeneralPayment,
             'payment_group_id'   => null,
+            'currency_code'      => $currencyDetail['currencyCode'] ?? null,
+            'original_amount'    => $currencyDetail['originalAmount'] ?? null,
+            'exchange_rate'      => $currencyDetail['exchangeRate'] ?? null,
+            'rate_manual_override' => $currencyDetail['rateManualOverride'] ?? false,
         ];
 
         $db = \Config\Database::connect();
@@ -393,7 +426,7 @@ class PaymentController extends BaseApiController
     // ──────────────────────────────────────────────────────────────
     // Multi-category payment helper (feature 061 US2)
     // ──────────────────────────────────────────────────────────────
-    private function createMultiCategory(array $data, array $student, string $tenantId, float $totalAmount, string $date, string $method)
+    private function createMultiCategory(array $data, array $student, string $tenantId, float $totalAmount, string $date, string $method, ?array $currencyDetail = null, float $originalTotal = 0.0)
     {
         $categories = $data['categories'];
         $studentId  = $student['id'];
@@ -402,11 +435,15 @@ class PaymentController extends BaseApiController
             return $this->error('Categories array must not be empty', 400);
         }
 
-        // Validate allocations sum to total
+        // Validate allocations sum to total (compare against original currency amount when multi-currency)
+        $validationTotal = $originalTotal > 0 ? $originalTotal : $totalAmount;
         $allocSum = array_sum(array_column($categories, 'amount'));
-        if (abs($allocSum - $totalAmount) > 0.01) {
+        if (abs($allocSum - $validationTotal) > 0.01) {
             return $this->error('Category allocations must sum to the total amount', 422);
         }
+
+        // For multi-currency, compute proportional base-currency amount per category
+        $conversionRatio = ($currencyDetail && $originalTotal > 0) ? $totalAmount / $originalTotal : 1.0;
 
         // Classify and guard against mixing
         $hasSystem  = false;
@@ -445,6 +482,7 @@ class PaymentController extends BaseApiController
             foreach ($categories as $cat) {
                 $catName   = $this->sanitiseString($cat['categoryName'] ?? '');
                 $catAmount = (float) ($cat['amount'] ?? 0);
+                $baseCatAmount = round($catAmount * $conversionRatio, 2);
                 $payId     = $this->generateId('p');
                 if ($firstPaymentId === null) {
                     $firstPaymentId = $payId;
@@ -453,7 +491,7 @@ class PaymentController extends BaseApiController
                     'id'                 => $payId,
                     'tenant_id'          => $tenantId,
                     'student_id'         => $studentId,
-                    'amount'             => $catAmount,
+                    'amount'             => $baseCatAmount,
                     'date'               => $date,
                     'method'             => $method,
                     'description'        => $description,
@@ -463,6 +501,10 @@ class PaymentController extends BaseApiController
                     'payment_group_id'   => $groupId,
                     'created_at'         => $now,
                     'updated_at'         => $now,
+                    'currency_code'      => $currencyDetail['currencyCode'] ?? null,
+                    'original_amount'    => $currencyDetail['originalAmount'] ?? null,
+                    'exchange_rate'      => $currencyDetail['exchangeRate'] ?? null,
+                    'rate_manual_override' => $currencyDetail['rateManualOverride'] ?? false,
                 ]);
             }
 
@@ -474,17 +516,18 @@ class PaymentController extends BaseApiController
                 $feeBalanceAfter     = $ledger['feeBalance'];
                 $transportBalanceAfter = $ledger['transportBalance'];
 
-                // Calculate fee and transport portions from the multi-category breakdown
+                // Calculate fee and transport portions from the multi-category breakdown (base currency)
                 $feeAmount = 0.0;
                 $transportAmount = 0.0;
                 foreach ($categories as $cat) {
                     $catName = $cat['categoryName'] ?? '';
                     $catAmount = (float) ($cat['amount'] ?? 0);
+                    $baseCatAmount = round($catAmount * $conversionRatio, 2);
                     if (in_array($catName, ['Fees', 'Transport + Fees'], true)) {
-                        $feeAmount += $catAmount;
+                        $feeAmount += $baseCatAmount;
                     }
                     if (in_array($catName, ['Transport', 'Transport Fee'], true)) {
-                        $transportAmount += $catAmount;
+                        $transportAmount += $baseCatAmount;
                     }
                 }
 
@@ -907,6 +950,7 @@ class PaymentController extends BaseApiController
         $classId  = $this->request->getGet('classId');
         $method   = $this->request->getGet('method');
         $category = $this->request->getGet('category');
+        $reportingCurrency = $this->request->getGet('reportingCurrency');
 
         if (empty($termId) && (empty($month) || empty($year))) {
             return $this->error('Either termId or both month and year are required.', 400);
@@ -929,6 +973,7 @@ class PaymentController extends BaseApiController
             'classId'  => $classId  ?: null,
             'method'   => $method   ?: null,
             'category' => $category ?: null,
+            'reportingCurrency' => $reportingCurrency ?: null,
         ];
 
         try {
@@ -940,6 +985,8 @@ class PaymentController extends BaseApiController
                 return $this->notFound($msg);
             }
             return $this->error($msg, 400);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 400);
         } catch (\Throwable $e) {
             log_message('error', '[FinancialReport] ' . $e->getMessage());
             return $this->serverError('Failed to generate the financial report. Please try again.');

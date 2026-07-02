@@ -16,7 +16,8 @@ class SettingsController extends BaseApiController
         'contactEmail' => '',
         'contactPhone' => '',
         'address' => '',
-        'defaultCurrency' => 'USD',
+        'baseCurrency' => 'USD',
+        'enabledCurrencies' => ['USD'],
         'staffWorkHours' => ['startTime' => '08:30', 'endTime' => '17:00'],
         'studentWorkHours' => ['startTime' => '08:30', 'endTime' => '15:30'],
         'kioskModeEnabled' => false,
@@ -25,8 +26,6 @@ class SettingsController extends BaseApiController
         'chargeProrationEnabled' => false,
         'studentAttendanceMode' => 'per_day',
     ];
-
-    private const VALID_CURRENCIES = ['USD', 'ZWL', 'ZAR', 'EUR', 'GBP'];
 
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
@@ -84,7 +83,8 @@ class SettingsController extends BaseApiController
             'contactEmail' => $settings['contactEmail'] ?? self::DEFAULT_SETTINGS['contactEmail'],
             'contactPhone' => $settings['contactPhone'] ?? self::DEFAULT_SETTINGS['contactPhone'],
             'address' => $settings['address'] ?? self::DEFAULT_SETTINGS['address'],
-            'defaultCurrency' => $settings['defaultCurrency'] ?? self::DEFAULT_SETTINGS['defaultCurrency'],
+            'baseCurrency' => 'USD',
+            'enabledCurrencies' => $settings['enabledCurrencies'] ?? self::DEFAULT_SETTINGS['enabledCurrencies'],
             'academicYear' => $settings['academicYear'] ?? date('Y'),
             'activeAcademicSession' => $settings['activeAcademicSession'] ?? null,
             'staffWorkHours' => $settings['staffWorkHours'] ?? self::DEFAULT_SETTINGS['staffWorkHours'],
@@ -107,11 +107,6 @@ class SettingsController extends BaseApiController
             if (!$this->validateEmail($data['contactEmail'])) {
                 return $this->error('Invalid email address format', 400);
             }
-        }
-
-        // Validate currency
-        if (isset($data['defaultCurrency']) && !in_array($data['defaultCurrency'], self::VALID_CURRENCIES)) {
-            return $this->error('Invalid currency. Allowed: ' . implode(', ', self::VALID_CURRENCIES), 400);
         }
 
         // Validate work hours
@@ -144,7 +139,6 @@ class SettingsController extends BaseApiController
             'contactEmail' => $data['contactEmail'] ?? $existingSettings['contactEmail'] ?? '',
             'contactPhone' => $data['contactPhone'] ?? $existingSettings['contactPhone'] ?? '',
             'address' => $data['address'] ?? $existingSettings['address'] ?? '',
-            'defaultCurrency' => $data['defaultCurrency'] ?? $existingSettings['defaultCurrency'] ?? 'USD',
             'academicYear' => $data['academicYear'] ?? $existingSettings['academicYear'] ?? date('Y'),
             'activeAcademicSession' => $data['activeAcademicSession']
                 ?? $existingSettings['activeAcademicSession']

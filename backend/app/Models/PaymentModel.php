@@ -18,6 +18,7 @@ class PaymentModel extends Model
         'is_general_payment', 'payment_group_id',
         'voided_at', 'void_reason', 'voided_by',
         'created_at', 'updated_at',
+        'currency_code', 'original_amount', 'exchange_rate', 'rate_manual_override',
     ];
     protected $useTimestamps = true;
 
@@ -787,6 +788,10 @@ class PaymentModel extends Model
             'voidedAt'             => $payment['voided_at'] ?? null,
             'voidReason'           => $payment['void_reason'] ?? null,
             'voidedBy'             => $payment['voided_by'] ?? null,
+            'currencyCode'         => $payment['currency_code'] ?? null,
+            'originalAmount'       => isset($payment['original_amount']) ? (float) $payment['original_amount'] : null,
+            'exchangeRate'         => isset($payment['exchange_rate']) ? (float) $payment['exchange_rate'] : null,
+            'rateManualOverride'   => isset($payment['rate_manual_override']) ? (bool) $payment['rate_manual_override'] : false,
         ];
     }
 

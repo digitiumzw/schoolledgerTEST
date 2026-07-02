@@ -15,12 +15,19 @@
  * @var float    $collectionRate
  * @var array    $methodBreakdown   [{method, count, total}]
  * @var array    $chargesSummary    [{category, total}]
- * @var array    $transactions      [{date, studentName, className, amount, method, category, receiptNumber, isVoided}]
+ * @var array    $transactions      [{date, studentName, className, amount, method, category, receiptNumber, isVoided, currencyCode, originalAmount, exchangeRate}]
  * @var string   $currency
+ * @var string   $baseCurrency
  */
 
 $fmt = function (float $n) use ($currency): string {
     return $currency . ' ' . number_format($n, 2);
+};
+$fmtBase = function (float $n) use ($baseCurrency): string {
+    return $baseCurrency . ' ' . number_format($n, 2);
+};
+$fmtOrig = function (float $n, string $code): string {
+    return $code . ' ' . number_format($n, 2);
 };
 $fmtPct = fn($n): string => number_format((float) $n, 1) . '%';
 ?>
@@ -252,6 +259,7 @@ $fmtPct = fn($n): string => number_format((float) $n, 1) . '%';
       <th style="width:22%">Student</th>
       <th style="width:13%">Class</th>
       <th class="r" style="width:12%">Amount</th>
+      <th class="r" style="width:10%">Original</th>
       <th style="width:13%">Method</th>
       <th style="width:14%">Category</th>
       <th style="width:17%">Receipt #</th>
@@ -264,6 +272,7 @@ $fmtPct = fn($n): string => number_format((float) $n, 1) . '%';
       <td><?= esc($tx['studentName']) ?></td>
       <td class="muted"><?= esc($tx['className'] ?? '—') ?></td>
       <td class="r"><?= $fmt((float) $tx['amount']) ?></td>
+      <td class="r"><?= ($tx['currencyCode'] && $tx['originalAmount'] !== null) ? $fmtOrig((float) $tx['originalAmount'], $tx['currencyCode']) : '—' ?></td>
       <td><?= esc($tx['method']) ?></td>
       <td><?= esc($tx['category']) ?></td>
       <td class="muted">
@@ -279,7 +288,7 @@ $fmtPct = fn($n): string => number_format((float) $n, 1) . '%';
     <tr>
       <td colspan="3">Total (non-voided)</td>
       <td class="r"><?= $fmt(array_sum(array_map(fn($t) => empty($t['isVoided']) ? (float) $t['amount'] : 0, $transactions))) ?></td>
-      <td colspan="3"></td>
+      <td colspan="2"></td>
     </tr>
   </tfoot>
 </table>

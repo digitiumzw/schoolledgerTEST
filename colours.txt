@@ -1,0 +1,156 @@
+SchoolLedger — Design System Colours
+=====================================
+Source: frontend/src/index.css (HSL CSS variables) + frontend/tailwind.config.ts
+Format: HSL (all colours are HSL per design-system rule)
+
+LIGHT THEME (:root)
+-------------------
+background            210 20% 96%    very light slate-grey
+foreground            210 65% 11%    very dark navy
+card                  0 0% 100%      white
+card-foreground       210 65% 11%    very dark navy
+popover               0 0% 100%      white
+popover-foreground    210 65% 11%    very dark navy
+
+primary               210 65% 11%    DARK NAVY (brand primary)
+primary-foreground    0 0% 100%      white
+
+secondary             208 44% 42%    STEEL BLUE
+secondary-foreground  0 0% 100%      white
+
+accent                174 75% 45%    TEAL / CYAN-GREEN
+accent-foreground     0 0% 100%      white
+
+muted                 210 15% 94%    light grey
+muted-foreground      210 10% 45%    mid grey
+
+destructive           0 84% 60%      RED
+destructive-foreground 0 0% 100%     white
+
+warning               30 95% 55%     ORANGE
+warning-foreground    0 0% 100%      white
+warning-soft          30 95% 92%     soft orange
+
+success               152 60% 36%    GREEN
+success-foreground    0 0% 100%      white
+success-soft          152 55% 92%    soft green
+
+info                  208 44% 42%    STEEL BLUE
+info-foreground       0 0% 100%      white
+info-soft             208 60% 94%    soft blue
+
+border                210 20% 88%    light grey
+input                 210 20% 88%    light grey
+ring                  174 75% 45%    teal
+
+radius                0.75rem
+
+SIDEBAR (light)
+sidebar-background    210 30% 98%    near-white slate
+sidebar-foreground    210 65% 15%    dark navy
+sidebar-primary       210 65% 11%    dark navy
+sidebar-primary-foreground 0 0% 100% white
+sidebar-accent        210 15% 94%    light grey
+sidebar-accent-foreground 174 75% 45% teal
+sidebar-border        210 25% 90%    light grey
+sidebar-ring          174 75% 45%    teal
+
+CHART PALETTE (light)
+chart-1               174 75% 45%    teal
+chart-2               208 44% 42%    steel blue
+chart-3               210 65% 25%    dark navy
+chart-4               260 50% 55%    purple
+chart-5               40 85% 55%     amber
+
+GRADIENTS (light)
+gradient-primary      linear-gradient(135deg, hsl(210 65% 11%) 0%, hsl(174 75% 45%) 100%)
+                      dark navy -> teal
+gradient-subtle       linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 20% 94%) 100%)
+                      light slate vertical fade
+
+SHADOWS (light)
+shadow-card           0 1px 2px 0 hsl(210 65% 11% / 0.04), 0 1px 3px 0 hsl(210 65% 11% / 0.06)
+shadow-elegant        0 10px 25px -5px hsl(210 65% 11% / 0.12), 0 4px 10px -4px hsl(210 65% 11% / 0.08)
+
+
+DARK THEME (.dark)
+------------------
+background            210 50% 6%     near-black navy
+foreground            210 20% 95%    near-white
+card                  210 45% 10%    dark navy
+card-foreground       210 20% 95%    near-white
+popover               210 45% 10%    dark navy
+popover-foreground    210 20% 95%    near-white
+
+primary               210 50% 25%    muted navy
+primary-foreground    0 0% 100%      white
+
+secondary             208 50% 55%    lighter steel blue
+secondary-foreground  0 0% 100%      white
+
+accent                174 70% 55%    lighter teal
+accent-foreground     210 50% 6%     near-black navy
+
+muted                 210 30% 18%    dark grey
+muted-foreground      210 15% 65%    light grey
+
+destructive           0 70% 50%      red
+destructive-foreground 210 20% 95%   near-white
+
+warning               30 90% 60%     orange
+warning-foreground    210 50% 6%     near-black navy
+warning-soft          30 50% 20%     dark orange
+
+success               152 55% 50%    green
+success-foreground    210 50% 6%     near-black navy
+success-soft          152 40% 18%    dark green
+
+info                  208 50% 60%    lighter steel blue
+info-foreground       210 50% 6%     near-black navy
+info-soft             208 40% 22%    dark blue
+
+border                210 30% 18%    dark grey
+input                 210 30% 18%    dark grey
+ring                  174 70% 55%    teal
+
+SIDEBAR (dark)
+sidebar-background    210 40% 12%    dark navy
+sidebar-foreground    210 20% 85%    light grey
+sidebar-primary       174 70% 55%    teal (primary accent in dark)
+sidebar-primary-foreground 210 50% 6% near-black navy
+sidebar-accent        210 40% 20%    dark grey
+sidebar-accent-foreground 174 70% 55% teal
+sidebar-border        210 30% 18%    dark grey
+sidebar-ring          174 70% 55%    teal
+
+CHART PALETTE (dark)
+chart-1               174 70% 55%    teal
+chart-2               208 50% 55%    steel blue
+chart-3               210 50% 35%    muted navy
+chart-4               260 50% 60%    purple
+chart-5               40 85% 60%     amber
+
+GRADIENTS (dark)
+gradient-primary      linear-gradient(135deg, hsl(210 50% 25%) 0%, hsl(174 70% 55%) 100%)
+                      muted navy -> lighter teal
+gradient-subtle       linear-gradient(180deg, hsl(210 45% 10%) 0%, hsl(210 50% 6%) 100%)
+                      dark navy vertical fade
+
+SHADOWS (dark)
+shadow-card           0 1px 2px 0 hsl(0 0% 0% / 0.35), 0 1px 3px 0 hsl(0 0% 0% / 0.4)
+shadow-elegant        0 10px 25px -5px hsl(0 0% 0% / 0.5), 0 4px 10px -4px hsl(0 0% 0% / 0.45)
+
+
+BRAND PALETTE SUMMARY
+=====================
+Three core brand hues:
+  1. DARK NAVY      hsl(210 65% 11%)   primary brand colour
+  2. TEAL           hsl(174 75% 45%)   accent / ring / chart-1 / gradient end
+  3. STEEL BLUE     hsl(208 44% 42%)   secondary / info / chart-2
+
+Semantic states:
+  - RED (destructive)   hsl(0 84% 60%)
+  - ORANGE (warning)    hsl(30 95% 55%)
+  - GREEN (success)     hsl(152 60% 36%)
+
+Primary gradient: navy -> teal at 135deg.

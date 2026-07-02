@@ -1,0 +1,30 @@
+# ─── Git ───────────────────────────────────────────────────────────
+.git
+.gitignore
+
+# ─── Docker ────────────────────────────────────────────────────────
+docker-compose*.yml
+docker/
+Dockerfile
+.dockerignore
+
+# ─── Specs / docs / IDE ────────────────────────────────────────────
+specs/
+.claude/
+.devin/
+.windsurf/
+.specify/
+CLAUDE.md
+BUSINESS_PROFILE.md
+colours.txt
+RULES.MD
+
+# ─── Environment ───────────────────────────────────────────────────
+.env
+.env.*
+
+# ─── Backend / frontend ────────────────────────────────────────────
+backend/
+frontend/
+qa/
+start.sh

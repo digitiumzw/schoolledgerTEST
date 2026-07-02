@@ -51,7 +51,20 @@ class FinancialReportService
 
         $tenant    = $this->fetchTenant($tenantId);
         $schoolName = $tenant['name'] ?? 'School';
-        $currency   = $tenant['currency'] ?? 'USD';
+
+        // Multi-currency: resolve base and reporting currency (Feature 094)
+        $currencyService = new \App\Services\CurrencyService($this->db);
+        $baseCurrency = $currencyService->getBaseCurrency($tenantId);
+        $reportingCurrency = $filters['reportingCurrency'] ?? $baseCurrency;
+
+        // Validate reporting currency is enabled
+        if ($reportingCurrency !== $baseCurrency) {
+            if (!$currencyService->isCurrencyEnabled($tenantId, $reportingCurrency)) {
+                throw new \InvalidArgumentException("{$reportingCurrency} is not an enabled currency for this tenant");
+            }
+        }
+
+        $currency = $reportingCurrency;
 
         $logoDataUri = '';
         $logoPath = FCPATH . '1765028860800.jpg';
@@ -66,6 +79,18 @@ class FinancialReportService
         $totalAdjustments      = $totals['totalAdjustments'];
         $outstandingBalance    = max(0, $totalExpectedFees - $totalPaymentsReceived + $totalAdjustments);
         $collectionRate        = $totalExpectedFees > 0 ? ($totalPaymentsReceived / $totalExpectedFees) * 100 : 0.0;
+
+        // Multi-currency: convert totals to reporting currency if different from base (Feature 094)
+        if ($reportingCurrency !== $baseCurrency) {
+            $reportRate = $currencyService->getRateForDate($tenantId, $reportingCurrency, $endDate);
+            if ($reportRate !== null) {
+                $convRate = (float) $reportRate['rate_to_base'];
+                $totalExpectedFees     = round($totalExpectedFees * $convRate, 2);
+                $totalPaymentsReceived = round($totalPaymentsReceived * $convRate, 2);
+                $totalAdjustments      = round($totalAdjustments * $convRate, 2);
+                $outstandingBalance    = round($outstandingBalance * $convRate, 2);
+            }
+        }
 
         // Fetch detailed data with limits to prevent memory exhaustion
         $charges      = $this->fetchCharges($tenantId, $startDate, $endDate, $filters);
@@ -88,6 +113,7 @@ class FinancialReportService
             'periodLabel'           => $periodLabel,
             'generatedAt'           => date('d M Y, H:i'),
             'currency'              => $currency,
+            'baseCurrency'          => $baseCurrency,
             'totalExpectedFees'     => $totalExpectedFees,
             'totalPaymentsReceived' => $totalPaymentsReceived,
             'outstandingBalance'    => $outstandingBalance,
@@ -283,6 +309,7 @@ class FinancialReportService
         $builder = $this->db->table('payments p')
             ->select('p.id, p.amount, p.date, p.method, p.category, p.receipt_number,
                       p.voided_at, p.is_general_payment, p.student_id,
+                      p.currency_code, p.original_amount, p.exchange_rate,
                       TRIM(CONCAT(s.first_name, " ", s.last_name)) AS student_name,
                       cl.name AS class_name, s.class_id')
             ->join('students s', 's.id = p.student_id AND s.tenant_id = p.tenant_id', 'left')
@@ -444,6 +471,9 @@ class FinancialReportService
             'category'      => $p['category'] ?? '—',
             'receiptNumber' => $p['receipt_number'] ?? null,
             'isVoided'      => !empty($p['voided_at']),
+            'currencyCode'       => $p['currency_code'] ?? null,
+            'originalAmount'     => isset($p['original_amount']) ? (float) $p['original_amount'] : null,
+            'exchangeRate'       => isset($p['exchange_rate']) ? (float) $p['exchange_rate'] : null,
         ], $payments);
     }
 
@@ -484,6 +514,7 @@ class FinancialReportService
             $builder = $this->db->table('payments p')
                 ->select('p.id, p.amount, p.date, p.method, p.category, p.receipt_number,
                           p.voided_at, p.is_general_payment, p.student_id,
+                          p.currency_code, p.original_amount, p.exchange_rate,
                           TRIM(CONCAT(s.first_name, " ", s.last_name)) AS student_name,
                           cl.name AS class_name, s.class_id')
                 ->join('students s', 's.id = p.student_id AND s.tenant_id = p.tenant_id', 'left')

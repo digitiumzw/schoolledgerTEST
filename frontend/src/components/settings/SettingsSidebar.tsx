@@ -1,7 +1,7 @@
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Settings, Users, Calendar, Menu, Receipt, Scale, UserCircle } from "lucide-react";
+import { Building2, Users, Calendar, Menu, UserCircle, Clock, MonitorSmartphone, Coins } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -9,8 +9,11 @@ const settingsGroups = [
   {
     label: "School",
     links: [
-      { to: "/settings/general", label: "General", icon: Settings, roles: ['super_admin', 'admin'] },
+      { to: "/settings/school-information", label: "School Information", icon: Building2, roles: ['super_admin', 'admin'] },
+      { to: "/settings/attendance", label: "Attendance Configuration", icon: Clock, roles: ['super_admin', 'admin'] },
+      { to: "/settings/kiosk", label: "Kiosk Settings", icon: MonitorSmartphone, roles: ['super_admin', 'admin'] },
       { to: "/settings/calendar", label: "Academic Calendar", icon: Calendar, roles: ['super_admin', 'admin'] },
+      { to: "/settings/currency", label: "Currency", icon: Coins, roles: ['super_admin', 'admin', 'bursar'] },
     ],
   },
   {

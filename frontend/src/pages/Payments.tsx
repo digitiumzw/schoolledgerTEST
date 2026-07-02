@@ -6,6 +6,7 @@ import { api, type FeeRuleUnbilledAlert, type PaymentFilterOptions, type Payment
 import { Student, Class, PaymentCategory, AcademicCalendar } from "@/types/dashboard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
 import { MobileCard } from "@/components/MobileCard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -48,7 +49,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { format } from "date-fns";
-import { formatCurrency } from "@/lib/studentUtils";
+import { formatCurrency, formatCurrencyForCode } from "@/lib/studentUtils";
 
 function getStudentName(payment: PaymentHistoryRecord): string {
   const student = payment.student;
@@ -69,6 +70,8 @@ function getStudentId(payment: PaymentHistoryRecord): string {
 export default function Payments() {
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const { data: currencyConfig } = useCurrencyConfig();
+  const baseCurrency = currencyConfig?.baseCurrency ?? 'USD';
   const [classes, setClasses] = useState<Class[]>([]);
   const [paymentCategories, setPaymentCategories] = useState<PaymentCategory[]>([]);
   const [paymentFilterOptions, setPaymentFilterOptions] = useState<PaymentFilterOptions | null>(null);
@@ -102,6 +105,7 @@ export default function Payments() {
   const [reportMonth, setReportMonth] = useState<string>(String(new Date().getMonth() + 1));
   const [reportYear, setReportYear] = useState<string>(String(new Date().getFullYear()));
   const [reportTermId, setReportTermId] = useState<string>('');
+  const [reportCurrency, setReportCurrency] = useState<string>('');
   const [calendar, setCalendar] = useState<AcademicCalendar | null>(null);
   const itemsPerPage = 20;
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -120,10 +124,11 @@ export default function Payments() {
   const handleGenerateReport = useCallback(async () => {
     setIsGeneratingReport(true);
     try {
-      const filters: { month?: number; year?: number; termId?: string; classId?: string; method?: string; category?: string } = {
+      const filters: { month?: number; year?: number; termId?: string; classId?: string; method?: string; category?: string; reportingCurrency?: string } = {
         classId: filterClass !== 'all' ? filterClass : undefined,
         method: filterMethod !== 'all' ? filterMethod : undefined,
         category: filterCategory !== 'all' && filterCategory !== 'none' ? filterCategory : undefined,
+        ...(reportCurrency && reportCurrency !== baseCurrency ? { reportingCurrency: reportCurrency } : {}),
       };
 
       if (reportType === 'term') {
@@ -584,7 +589,16 @@ export default function Payments() {
                         </div>
                         <div className="text-right">
                           <div className={`text-lg font-bold ${payment.isVoided ? 'text-muted-foreground' : 'text-primary'}`}>
-                            {formatCurrency(payment.amount)}
+                            {payment.currencyCode && payment.originalAmount != null && payment.currencyCode !== baseCurrency ? (
+                              <div className="flex flex-col items-end">
+                                <span>{formatCurrencyForCode(payment.originalAmount, payment.currencyCode)}</span>
+                                <span className="text-xs font-normal text-muted-foreground">
+                                  ≈ {formatCurrencyForCode(payment.amount, baseCurrency)}
+                                </span>
+                              </div>
+                            ) : (
+                              formatCurrencyForCode(payment.amount, baseCurrency)
+                            )}
                           </div>
                           {payment.isVoided && (
                             <Badge variant="destructive" className="text-xs">Voided</Badge>
@@ -713,7 +727,16 @@ export default function Payments() {
                         <TableCell>{getStudentClass(payment)}</TableCell>
                         <TableCell>{format(new Date(payment.date), "MMM dd, yyyy")}</TableCell>
                         <TableCell className={`font-semibold ${payment.isVoided ? 'text-muted-foreground' : 'text-primary'}`}>
-                          {formatCurrency(payment.amount)}
+                          {payment.currencyCode && payment.originalAmount != null && payment.currencyCode !== baseCurrency ? (
+                            <div className="flex flex-col">
+                              <span>{formatCurrencyForCode(payment.originalAmount, payment.currencyCode)}</span>
+                              <span className="text-xs font-normal text-muted-foreground">
+                                ≈ {formatCurrencyForCode(payment.amount, baseCurrency)}
+                              </span>
+                            </div>
+                          ) : (
+                            formatCurrencyForCode(payment.amount, baseCurrency)
+                          )}
                           {payment.isVoided && (
                             <Badge variant="destructive" className="ml-2 text-xs">Voided</Badge>
                           )}

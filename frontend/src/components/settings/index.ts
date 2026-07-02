@@ -17,7 +17,9 @@ export { CreateRefundModal } from './CreateRefundModal';
 
 // Tab pages
 export { FeeStructureTab } from './FeeStructureTab';
-export { GeneralSettingsTab } from './GeneralSettingsTab';
+export { SchoolInformationTab } from './SchoolInformationTab';
+export { AttendanceConfigurationTab } from './AttendanceConfigurationTab';
+export { KioskSettingsTab } from './KioskSettingsTab';
 export { UserAccountsTab } from './UserAccountsTab';
 export { PaymentCategoriesTab } from './PaymentCategoriesTab';
 export { AcademicCalendarTab } from './AcademicCalendarTab';

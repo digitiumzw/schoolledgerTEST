@@ -215,7 +215,9 @@ class FeeRuleController extends BaseApiController
                 $tenantId,
                 (string) $data['billingPeriod'],
                 $data['feeRuleIds'] ?? null,
-                $this->getCurrentUser()->userId ?? null
+                $this->getCurrentUser()->userId ?? null,
+                $data['currency'] ?? null,
+                isset($data['exchangeRateOverride']) ? (float) $data['exchangeRateOverride'] : null
             );
         } catch (\InvalidArgumentException $e) {
             return $this->error($e->getMessage(), 422);

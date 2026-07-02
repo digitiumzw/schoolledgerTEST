@@ -197,25 +197,25 @@ class SetupGuideService
                 'label' => 'Add Staff',
                 'optional' => false,
                 'route' => '/staff',
-                'description' => 'Add staff members before assigning classes or responsibilities.',
+                'description' => 'Add teaching and non-teaching staff so you can assign teachers to classes and track attendance. Click "Add Staff" and fill in the employee ID, name, department, and role.',
             ],
             self::STEP_ADD_CLASSES => [
                 'label' => 'Add Classes',
                 'optional' => false,
                 'route' => '/classes',
-                'description' => 'Create classes before adding students and configuring class-based fees.',
+                'description' => 'Create your school\'s classes (e.g. Grade 1A, Form 2B) before enrolling students. Students need a class assignment for fee generation and attendance. Click "Add Class" to get started.',
             ],
             self::STEP_ADD_STUDENTS => [
                 'label' => 'Add Students',
                 'optional' => true,
                 'route' => '/students',
-                'description' => 'Add students now or skip this step and return later.',
+                'description' => 'Enrol students individually with "Add Student" or use "Bulk Import" to upload a CSV. You can skip this step now and return later — students will need a class assignment after import.',
             ],
             self::STEP_CONFIGURE_BILLING => [
                 'label' => 'Configure Fee Structure and Billing Settings',
                 'optional' => false,
                 'route' => '/payments?tab=fee-structure',
-                'description' => 'Set up billing after staff, classes, and optional student setup are ready.',
+                'description' => 'Set up fee rules on the Fee Structure tab — define amounts, scope (school-wide or by class), and billing cycle. Also configure the academic calendar in Settings so billing periods and dashboard KPIs work correctly.',
             ],
         ];
     }

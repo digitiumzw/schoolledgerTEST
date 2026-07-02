@@ -47,7 +47,11 @@ export function RoutePeriodModal({ open, onOpenChange, onSuccess, routeId, perio
       setLoading(true);
       const data = {
         vehicleId: form.vehicleId,
-        driverId: form.driverId || undefined,
+        // Send null (not undefined) when no driver is selected so the
+        // backend can distinguish "remove driver" from "no change" via
+        // array_key_exists.  undefined is omitted by JSON.stringify and
+        // would leave the old driver_id untouched on update.
+        driverId: form.driverId || null,
       };
       if (period) {
         await api.updateRoutePeriod(period.id, data);

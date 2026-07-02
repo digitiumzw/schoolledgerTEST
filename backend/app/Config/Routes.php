@@ -202,6 +202,14 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('settings', 'SettingsController::index');
     $routes->put('settings', 'SettingsController::update');
 
+    // ==================== Currencies & Exchange Rates (Feature 094) ====================
+    $routes->get('currencies', 'CurrencyController::index');
+    $routes->put('currencies', 'CurrencyController::update');
+    $routes->get('exchange-rates', 'CurrencyController::listRates');
+    $routes->get('exchange-rates/lookup', 'CurrencyController::lookupRate');
+    $routes->post('exchange-rates', 'CurrencyController::createRate');
+    $routes->put('exchange-rates/(:segment)', 'CurrencyController::updateRate/$1');
+
     // ==================== Fee Structure (billing cycle only) ====================
     $routes->get('fee-structure', 'SettingsController::getFeeStructure');
     $routes->put('fee-structure', 'SettingsController::saveFeeStructure');

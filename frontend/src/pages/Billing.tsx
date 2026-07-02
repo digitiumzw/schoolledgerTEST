@@ -233,7 +233,7 @@ export default function Billing() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <ContextualHelpLink sectionId="billing-workflow" label="Billing Workflow Help" />
+          <ContextualHelpLink sectionId="subscription" label="Subscription Help" />
           <Button variant="ghost" size="sm" onClick={() => setOnboardingOpen(true)} className="hidden sm:flex">
             <HelpCircle className="h-4 w-4 mr-2" />
             Billing guide

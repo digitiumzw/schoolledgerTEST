@@ -229,7 +229,7 @@ export function MigrationPreviewModal({
               <AlertDescription className="flex items-center justify-between gap-4 flex-wrap mt-1">
                 <span>No active academic session is configured. Set one before running a migration.</span>
                 <Link
-                  to="/settings/general"
+                  to="/settings/calendar"
                   className="shrink-0 inline-flex items-center gap-1 text-sm font-medium underline underline-offset-2 hover:no-underline"
                   onClick={() => onOpenChange(false)}
                 >

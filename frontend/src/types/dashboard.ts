@@ -110,6 +110,10 @@ export interface Charge {
   routeId?: string | null;                // Transport route ID (for transport charges)
   deletedAt?: string;                     // ISO date when charge was reversed/deleted (soft delete)
   deletionReason?: string;                // Reason for deletion/reversal (e.g., "Undo generation", "Correction")
+  currencyCode?: string | null;           // Transaction currency code; null = base currency (feature 094)
+  originalAmount?: number | null;         // Amount in currencyCode; null when currencyCode is null (feature 094)
+  exchangeRate?: number | null;           // Rate applied at creation (immutable); null/1.0 for base currency (feature 094)
+  rateManualOverride?: boolean;           // true = user manually overrode the auto-applied rate (feature 094)
 }
 
 /**
@@ -173,6 +177,10 @@ export interface Payment {
   voidedAt?: string | null;               // ISO datetime when payment was voided (feature 085)
   voidReason?: string | null;             // Reason recorded when voiding (feature 085)
   voidedBy?: string | null;               // User ID who performed the void (feature 085)
+  currencyCode?: string | null;           // Transaction currency code; null = base currency (feature 094)
+  originalAmount?: number | null;         // Amount in currencyCode; null when currencyCode is null (feature 094)
+  exchangeRate?: number | null;           // Rate applied at creation (immutable); null/1.0 for base currency (feature 094)
+  rateManualOverride?: boolean;           // true = user manually overrode the auto-applied rate (feature 094)
 }
 
 export interface PaymentPaginationMeta {
@@ -267,6 +275,7 @@ export interface TutorialModule {
   summary: string;
   contains: string[];
   primary_actions: string[];
+  tips?: string[];
   route: string;
   order: number;
 }
@@ -1130,7 +1139,6 @@ export interface TransportRouteFormData {
  *   contactEmail: "admin@stmarys.ac.zw",
  *   contactPhone: "+263 24 555 1234",
  *   address: "123 School Road, Harare, Zimbabwe",
- *   defaultCurrency: "USD",
  *   academicYear: "2025"
  * }
  */
@@ -1140,7 +1148,6 @@ export interface Settings {
   contactEmail: string;                   // School admin email
   contactPhone: string;                   // School phone number
   address: string;                        // Physical address
-  defaultCurrency: string;                // Currency code (e.g., "USD")
   academicYear: string;                   // Current year (e.g., "2025")
   activeAcademicSession?: string | null;  // Active session in YYYY/YYYY+1 format (e.g., "2026/2027")
   staffWorkHours?: WorkHours;             // Staff work hour configuration (optional for backward compatibility)
@@ -1717,3 +1724,31 @@ export interface RouteStudentsParams {
 }
 
 export type PaginatedRouteStudentsResponse = PaginatedResponse<TransportAllocationStudent>;
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Feature 094: Multi-Currency Support
+// ──────────────────────────────────────────────────────────────────────────────
+
+export interface CurrencyConfiguration {
+  baseCurrency: string;
+  enabledCurrencies: string[];
+  supportedCurrencies: string[];
+  baseCurrencyLocked: boolean;
+  multiCurrencyEnabled: boolean;
+}
+
+export interface ExchangeRate {
+  id: string;
+  currencyCode: string;
+  rateToBase: number;
+  effectiveDate: string;
+  createdBy: string | null;
+  createdAt: string | null;
+}
+
+export interface ExchangeRateLookupResult {
+  currencyCode: string;
+  date: string;
+  rateToBase: number | null;
+  found: boolean;
+}

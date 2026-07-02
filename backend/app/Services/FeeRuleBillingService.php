@@ -90,7 +90,9 @@ class FeeRuleBillingService
         string  $tenantId,
         string  $billingPeriod,
         ?array  $feeRuleIds = null,
-        ?string $createdBy  = null
+        ?string $createdBy  = null,
+        ?string $currency = null,
+        ?float  $exchangeRateOverride = null
     ): array {
         $tenant = $this->loadTenant($tenantId);
         $cycle  = $this->resolveStructureType($tenant);
@@ -128,6 +130,32 @@ class FeeRuleBillingService
         $prorationEnabled  = (bool) ($settings['chargeProrationEnabled'] ?? false);
         $periodStart       = $this->resolvePeriodStart($billingPeriod, $cycle, $term);
         $periodEnd         = $this->resolvePeriodEnd($billingPeriod, $cycle, $term);
+
+        // Multi-currency resolution (Feature 094): resolve once for the batch
+        $currencyDetail = null;
+        if ($currency !== null && $currency !== '') {
+            $currencyService = new \App\Services\CurrencyService($this->db);
+            // We need a per-charge resolution since each charge has its own amount,
+            // but the rate is the same for all charges on the same date.
+            // We'll resolve the rate once and apply it to each charge's amount.
+            $baseCurrency = $currencyService->getBaseCurrency($tenantId);
+            if ($currency !== $baseCurrency) {
+                if (!$currencyService->isCurrencyEnabled($tenantId, $currency)) {
+                    throw new \InvalidArgumentException("{$currency} is not an enabled currency for this tenant", 400);
+                }
+                $rateRow = $currencyService->getRateForDate($tenantId, $currency, $today);
+                if ($rateRow === null && $exchangeRateOverride === null) {
+                    throw new \RuntimeException("No exchange rate found for {$currency} on or before {$today}. Please enter an exchange rate first.", 422);
+                }
+                $rateToBase = $exchangeRateOverride ?? (float) $rateRow['rate_to_base'];
+                $rateManualOverride = $exchangeRateOverride !== null;
+                $currencyDetail = [
+                    'currencyCode' => $currency,
+                    'exchangeRate' => $rateToBase,
+                    'rateManualOverride' => $rateManualOverride,
+                ];
+            }
+        }
 
         // Pre-fetch existing (student_id, fee_rule_id) tuples for this period
         // so we can skip duplicates in PHP. We deliberately avoid relying on
@@ -188,6 +216,14 @@ class FeeRuleBillingService
 
                 $finalAmount = round($baseAmount - $bursaryDiscount, 2);
 
+                // Multi-currency: convert finalAmount to base-currency equivalent (Feature 094)
+                $originalAmount = null;
+                $chargeAmount = $finalAmount;
+                if ($currencyDetail !== null) {
+                    $originalAmount = $finalAmount;
+                    $chargeAmount = round($finalAmount / $currencyDetail['exchangeRate'], 2);
+                }
+
                 $description = $this->buildDescription($rule, $billingPeriod, $labels['descriptionLabel']);
                 if ($proration['wasProrated']) {
                     $description .= sprintf(' – prorated %d/%d days', $proration['remainingDays'], $proration['totalDays']);
@@ -201,7 +237,7 @@ class FeeRuleBillingService
                     'tenant_id'      => $tenantId,
                     'student_id'     => $student['id'],
                     'category'       => $this->resolveCategoryLabel($rule),
-                    'amount'         => $finalAmount,
+                    'amount'         => $chargeAmount,
                     'date_generated' => $today,
                     'description'    => $description,
                     'created_by'     => $createdBy,
@@ -210,6 +246,14 @@ class FeeRuleBillingService
                     'created_at'     => $now,
                     'updated_at'     => $now,
                 ];
+
+                // Multi-currency fields (Feature 094)
+                if ($currencyDetail !== null) {
+                    $row['currency_code'] = $currencyDetail['currencyCode'];
+                    $row['original_amount'] = $originalAmount;
+                    $row['exchange_rate'] = $currencyDetail['exchangeRate'];
+                    $row['rate_manual_override'] = $currencyDetail['rateManualOverride'];
+                }
 
                 if ($this->fieldExists('charge_type'))      $row['charge_type']      = $this->mapChargeType($rule);
                 if ($this->fieldExists('status'))           $row['status']           = 'pending';
@@ -225,8 +269,8 @@ class FeeRuleBillingService
                 $generatedCount++;
                 $chargedStudents[$student['id']] = true;
                 $ruleGenerated++;
-                $ruleAmount  += $finalAmount;
-                $totalAmount += $finalAmount;
+                $ruleAmount  += $chargeAmount;
+                $totalAmount += $chargeAmount;
 
                 if (count($pendingCharges) >= 250) {
                     $this->db->table('charges')->insertBatch($pendingCharges);

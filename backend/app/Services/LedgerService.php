@@ -12,6 +12,17 @@ namespace App\Services;
  * Constitution Principle I: All queries accept $tenantId sourced from the JWT
  * payload (never from request body). Methods do NOT look up tenantId themselves.
  *
+ * Feature 094 (Multi-Currency): The `amount` column on charges and payments
+ * ALWAYS holds the base-currency equivalent, computed once and immutably at
+ * transaction creation time by CurrencyService::resolveTransactionCurrency().
+ * This means all SUM(amount) queries in this service automatically aggregate
+ * correctly across different transaction currencies — no conversion logic is
+ * needed here. Cross-currency FIFO allocation works because both charges and
+ * payments are expressed in the same base currency on the `amount` column.
+ * The original currency details (currency_code, original_amount, exchange_rate)
+ * are preserved on each row for display/reporting transparency but do NOT
+ * participate in balance arithmetic.
+ *
  * Usage:
  *   $service = new \App\Services\LedgerService(\Config\Database::connect());
  *   $balance = $service->getStudentBalance($studentId, $tenantId);

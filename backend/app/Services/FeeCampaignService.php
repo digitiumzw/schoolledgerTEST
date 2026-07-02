@@ -159,6 +159,33 @@ class FeeCampaignService
             return ['error' => 'Amount must be greater than zero', 'status' => 400];
         }
 
+        // Multi-currency resolution (Feature 094)
+        $currencyCode = isset($data['currency']) ? trim($data['currency']) : null;
+        $exchangeRateOverride = isset($data['exchangeRateOverride']) ? (float) $data['exchangeRateOverride'] : null;
+        $currencyDetail = null;
+        $paymentDate = $data['date'] ?? date('Y-m-d');
+
+        if ($currencyCode && $currencyCode !== '') {
+            $currencyService = new \App\Services\CurrencyService($this->db);
+            try {
+                $currencyDetail = $currencyService->resolveTransactionCurrency(
+                    $tenantId,
+                    $currencyCode,
+                    $paymentDate,
+                    $amount,
+                    $exchangeRateOverride
+                );
+                // The base-currency amount becomes the authoritative `amount` for ledger purposes
+                $amount = $currencyDetail['baseCurrencyAmount'];
+            } catch (\InvalidArgumentException $e) {
+                $code = (int) $e->getCode();
+                return ['error' => $e->getMessage(), 'status' => $code > 0 ? $code : 400];
+            } catch (\RuntimeException $e) {
+                $code = (int) $e->getCode();
+                return ['error' => $e->getMessage(), 'status' => $code > 0 ? $code : 422, 'requiresRate' => true];
+            }
+        }
+
         $now       = date('Y-m-d H:i:s');
         $paymentId = $this->generateId('pay_');
         $receiptNo = date('Y.m.d.His') . '.' . chr(random_int(65, 90));
@@ -193,7 +220,7 @@ class FeeCampaignService
                 'tenant_id'       => $tenantId,
                 'student_id'      => $studentId,
                 'amount'          => $amount,
-                'date'            => $data['date'] ?? date('Y-m-d'),
+                'date'            => $paymentDate,
                 'method'          => $data['method'] ?? 'Cash',
                 'description'     => $data['description'] ?? ('Campaign: ' . $campaign['name']),
                 'category'        => $campaign['name'],
@@ -202,6 +229,10 @@ class FeeCampaignService
                 'snapshot'        => $snapshotJson,
                 'created_at'      => $now,
                 'updated_at'      => $now,
+                'currency_code'      => $currencyDetail['currencyCode'] ?? null,
+                'original_amount'    => $currencyDetail['originalAmount'] ?? null,
+                'exchange_rate'      => $currencyDetail['exchangeRate'] ?? null,
+                'rate_manual_override' => $currencyDetail['rateManualOverride'] ?? false,
             ]);
 
             // Update campaign_students paid_amount and status

@@ -324,6 +324,26 @@ export const formatCurrencyCompact = (amount: number | string): string => {
   }).format(numAmount);
 };
 
+export const formatCurrencyForCode = (
+  amount: number | string | null | undefined,
+  currencyCode: string | null | undefined,
+): string => {
+  if (amount == null) return '—';
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  if (isNaN(numAmount)) return '—';
+  if (!currencyCode) return formatCurrency(numAmount);
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyCode,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(numAmount);
+  } catch {
+    return formatCurrency(numAmount);
+  }
+};
+
 export const formatAdmissionNumber = (raw: string): string => raw;
 
 export const getGenderLabel = (gender: string | undefined): string => {

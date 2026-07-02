@@ -37,6 +37,7 @@ class TransportController extends BaseApiController
     {
         $tenantId = $this->getTenantId();
         $search = trim((string) ($this->request->getGet('search') ?? ''));
+        $status = trim((string) ($this->request->getGet('status') ?? 'active'));
 
         $pagination = $this->normalisePaginationParams(50, 200);
         if (isset($pagination['error'])) {
@@ -58,6 +59,11 @@ class TransportController extends BaseApiController
 
         $routesBuilder = $this->db->table('transport_routes')
             ->where('tenant_id', $tenantId);
+
+        // Default to active routes only; pass status=all to see soft-deleted.
+        if ($status !== 'all' && in_array($status, ['active', 'inactive'], true)) {
+            $routesBuilder->where('status', $status);
+        }
 
         if ($search !== '') {
             $routesBuilder->like('route_name', $search);
@@ -579,7 +585,16 @@ class TransportController extends BaseApiController
             ->where('route_id', $id)->where('tenant_id', $tenantId)
             ->update(['status' => 'inactive', 'updated_at' => $now]);
 
-        $this->db->table('transport_routes')->where('id', $id)->delete();
+        // Soft-delete the route (mark inactive) instead of hard-deleting.
+        // Hard-deletion orphans transport_route_periods, transport_stops and
+        // transport_student_allocations that still reference the route_id,
+        // and makes it impossible to audit or restore.  The kiosk and all
+        // list endpoints already filter by status='active', so marking the
+        // route inactive achieves the same user-facing result while keeping
+        // referential integrity intact.
+        $this->db->table('transport_routes')
+            ->where('id', $id)->where('tenant_id', $tenantId)
+            ->update(['status' => 'inactive', 'updated_at' => $now]);
 
         return $this->success(null, 'Route deleted successfully');
     }
@@ -603,6 +618,8 @@ class TransportController extends BaseApiController
         $tenantId = $this->getTenantId();
         $body     = $this->getRequestBody();
         $month    = $body['month'] ?? date('Y-m');   // e.g. "2026-03"
+        $currencyCode = isset($body['currency']) ? $this->sanitiseString($body['currency']) : null;
+        $exchangeRateOverride = isset($body['exchangeRateOverride']) ? (float) $body['exchangeRateOverride'] : null;
 
         if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
             return $this->error('Invalid month format (expected YYYY-MM)', 400);
@@ -641,6 +658,28 @@ class TransportController extends BaseApiController
         $now      = date('Y-m-d H:i:s');
         $dueDate  = $month . '-05'; // due on 5th of the month
 
+        // Multi-currency resolution (Feature 094)
+        $currencyDetail = null;
+        if ($currencyCode && $currencyCode !== '') {
+            $currencyService = new \App\Services\CurrencyService($this->db);
+            $baseCurrency = $currencyService->getBaseCurrency($tenantId);
+            if ($currencyCode !== $baseCurrency) {
+                if (!$currencyService->isCurrencyEnabled($tenantId, $currencyCode)) {
+                    return $this->error("{$currencyCode} is not an enabled currency for this tenant", 400);
+                }
+                $rateRow = $currencyService->getRateForDate($tenantId, $currencyCode, $monthStart);
+                if ($rateRow === null && $exchangeRateOverride === null) {
+                    return $this->error("No exchange rate found for {$currencyCode} on or before {$monthStart}. Please enter an exchange rate first.", 422, ['requiresRate' => true]);
+                }
+                $rateToBase = $exchangeRateOverride ?? (float) $rateRow['rate_to_base'];
+                $currencyDetail = [
+                    'currencyCode' => $currencyCode,
+                    'exchangeRate' => $rateToBase,
+                    'rateManualOverride' => $exchangeRateOverride !== null,
+                ];
+            }
+        }
+
         $this->db->transStart();
         $billingRunId = $batchService->createBillingRun(
             $tenantId,
@@ -678,13 +717,21 @@ class TransportController extends BaseApiController
                 $description .= sprintf(' – prorated %d/%d days', $proration['remainingDays'], $proration['totalDays']);
             }
 
-            $this->db->table('charges')->insert([
+            // Multi-currency: convert amount to base-currency equivalent (Feature 094)
+            $originalChargeAmount = null;
+            $chargeAmount = (float) $proration['amount'];
+            if ($currencyDetail !== null) {
+                $originalChargeAmount = $chargeAmount;
+                $chargeAmount = round($chargeAmount / $currencyDetail['exchangeRate'], 2);
+            }
+
+            $chargeRow = [
                 'id'                  => $this->generateId('chg_'),
                 'tenant_id'           => $tenantId,
                 'student_id'          => $a['student_id'],
                 'charge_type'         => 'transport',
                 'category'            => 'Transport Fee',
-                'amount'              => $proration['amount'],
+                'amount'              => $chargeAmount,
                 'date_generated'      => $monthStart,
                 'description'         => $description,
                 'academic_session'    => $month,
@@ -697,10 +744,19 @@ class TransportController extends BaseApiController
                 'term_id'             => $labels['termId'] ?? null,
                 'created_at'          => $now,
                 'updated_at'          => $now,
-            ]);
+            ];
+
+            if ($currencyDetail !== null) {
+                $chargeRow['currency_code'] = $currencyDetail['currencyCode'];
+                $chargeRow['original_amount'] = $originalChargeAmount;
+                $chargeRow['exchange_rate'] = $currencyDetail['exchangeRate'];
+                $chargeRow['rate_manual_override'] = $currencyDetail['rateManualOverride'];
+            }
+
+            $this->db->table('charges')->insert($chargeRow);
             $created++;
             $chargedStudents[$a['student_id']] = true;
-            $totalAmount += (float) $proration['amount'];
+            $totalAmount += $chargeAmount;
         }
 
         if ($created > 0) {
@@ -1102,7 +1158,7 @@ class TransportController extends BaseApiController
             LEFT JOIN transport_drivers d ON d.id = rp.driver_id
             LEFT JOIN transport_student_allocations tsa
                 ON tsa.route_id = r.id AND tsa.status = 'active' AND tsa.tenant_id = ?
-            WHERE r.tenant_id = ?
+            WHERE r.tenant_id = ? AND r.status = 'active'
             GROUP BY r.id, v.name, d.name
             ORDER BY r.route_name
         ", [$tenantId, $tenantId, $tenantId])->getResultArray();
@@ -1217,7 +1273,7 @@ class TransportController extends BaseApiController
             LEFT JOIN transport_drivers d ON d.id = rp.driver_id
             LEFT JOIN transport_student_allocations tsa
                 ON tsa.route_id = r.id AND tsa.status = 'active' AND tsa.tenant_id = ?
-            WHERE r.tenant_id = ?
+            WHERE r.tenant_id = ? AND r.status = 'active'
             GROUP BY r.id, v.name, v.reg_number, d.id, d.name, d.phone
             ORDER BY d.name
         ", [$tenantId, $tenantId, $tenantId])->getResultArray();
@@ -1784,7 +1840,14 @@ class TransportController extends BaseApiController
             $update['vehicle_id'] = $body['vehicleId'];
         }
         if (array_key_exists('driverId', $body)) {
-            $update['driver_id'] = $body['driverId'] ?: null;
+            $driverId = $body['driverId'];
+            if ($driverId) {
+                $driver = $this->db->table('transport_drivers')
+                    ->where('id', $driverId)->where('tenant_id', $tenantId)
+                    ->get()->getRowArray();
+                if (!$driver) return $this->error('Driver not found', 404);
+            }
+            $update['driver_id'] = $driverId ?: null;
         }
         if (isset($body['status']) && in_array($body['status'], ['active', 'inactive'])) {
             $update['status'] = $body['status'];

@@ -44,7 +44,13 @@ export function useHelpSearch(
           const searchText = [
             section.heading,
             topic.title,
+            topic.summary || '',
             ...topic.steps.map((s) => s.instruction),
+            ...(topic.steps.map((s) => s.tip || '')),
+            ...(topic.prerequisites || []),
+            ...(topic.warnings || []),
+            ...(topic.notes || []),
+            ...(topic.faqs || []).flatMap((f) => [f.question, f.answer]),
             ...(topic.tags || []),
           ]
             .join(' ')

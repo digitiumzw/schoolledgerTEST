@@ -160,7 +160,7 @@ export default function Transport() {
             <p className="text-sm text-muted-foreground">{filteredRoutes.length} route{filteredRoutes.length !== 1 ? "s" : ""} · {filteredVehicles.length} vehicle{filteredVehicles.length !== 1 ? "s" : ""} · {filteredDrivers.length} driver{filteredDrivers.length !== 1 ? "s" : ""}</p>
           </div>
           <div className="flex items-center gap-3">
-            <ContextualHelpLink sectionId="transport-configuration" label="Transport Configuration Help" />
+            <ContextualHelpLink sectionId="transport" label="Transport Help" />
             <Button variant="ghost" size="sm" onClick={() => setOnboardingOpen(true)} className="hidden sm:flex">
               <HelpCircle className="h-4 w-4 mr-2" />
               Transport guide

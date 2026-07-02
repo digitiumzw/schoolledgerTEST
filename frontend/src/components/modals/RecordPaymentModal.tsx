@@ -43,10 +43,16 @@ import {
 import { FeeCampaign, StudentCampaignMembership } from "@/api/api";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/studentUtils";
+import { formatCurrency, formatCurrencyForCode } from "@/lib/studentUtils";
 import { PrintReceiptModal } from "@/components/modals/PrintReceiptModal";
 import { Badge } from "@/components/ui/badge";
 import { MultiCategoryPaymentInput } from "@/api/api";
+import { useCurrencyConfig } from "@/hooks/useCurrencyConfig";
+import { useExchangeRateLookup } from "@/hooks/useExchangeRateLookup";
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
 
 // Payment category interface (extended with system flag for feature 057)
 interface PaymentCategory {
@@ -106,6 +112,20 @@ export function RecordPaymentModal({
     [{ categoryName: "none", amount: "" }]
   );
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  // Multi-currency state (Feature 094)
+  const { data: currencyConfig } = useCurrencyConfig();
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
+  const [exchangeRateOverride, setExchangeRateOverride] = useState<string>('');
+  const paymentDateStr = formData.date ? format(formData.date, 'yyyy-MM-dd') : '';
+  const { data: rateLookup, isLoading: rateLoading } = useExchangeRateLookup(
+    selectedCurrency && selectedCurrency !== currencyConfig?.baseCurrency ? selectedCurrency : null,
+    paymentDateStr || null,
+  );
+  const effectiveRate = exchangeRateOverride ? parseFloat(exchangeRateOverride) : rateLookup?.rateToBase ?? null;
+  const baseCurrencyEquivalent = effectiveRate && formData.amount
+    ? round2(parseFloat(formData.amount) / effectiveRate)
+    : null;
 
   // Fee Campaign Payment state (feature 086)
   const [campaignPaymentMode, setCampaignPaymentMode] = useState(false);
@@ -229,7 +249,10 @@ export function RecordPaymentModal({
     }
 
     const amount = parseFloat(formData.amount);
-    if (studentBalance != null && amount > studentBalance.balance && studentBalance.balance > 0) {
+    const effectiveDeduction = currencyConfig?.multiCurrencyEnabled && selectedCurrency && currencyConfig && selectedCurrency !== currencyConfig.baseCurrency
+      ? (baseCurrencyEquivalent ?? amount)
+      : amount;
+    if (studentBalance != null && effectiveDeduction > studentBalance.balance && studentBalance.balance > 0) {
       toast.warning("Payment amount exceeds student balance");
     }
 
@@ -360,6 +383,9 @@ export function RecordPaymentModal({
           method: formData.method,
           description: formData.description,
           categories: categoryRows.map(r => ({ categoryName: r.categoryName, amount: parseFloat(r.amount) })),
+          ...(selectedCurrency && selectedCurrency !== currencyConfig?.baseCurrency
+            ? { currency: selectedCurrency, exchangeRateOverride: exchangeRateOverride ? parseFloat(exchangeRateOverride) : undefined }
+            : {}),
         };
         saved = await api.createPayment(payload);
       } else {
@@ -371,6 +397,9 @@ export function RecordPaymentModal({
           description: formData.description,
           category: formData.category === "none" ? "" : formData.category,
           term: formData.term,
+          ...(selectedCurrency && selectedCurrency !== currencyConfig?.baseCurrency
+            ? { currency: selectedCurrency, exchangeRateOverride: exchangeRateOverride ? parseFloat(exchangeRateOverride) : undefined }
+            : {}),
         });
       }
 
@@ -751,7 +780,12 @@ export function RecordPaymentModal({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">New Balance:</span>
                   <span className="font-semibold text-primary">
-                    {formatCurrency(Math.max(0, studentBalance.balance - parseFloat(formData.amount)))}
+                    {formatCurrencyForCode(
+                      Math.max(0, studentBalance.balance - (currencyConfig?.multiCurrencyEnabled && selectedCurrency && currencyConfig && selectedCurrency !== currencyConfig.baseCurrency
+                        ? (baseCurrencyEquivalent ?? parseFloat(formData.amount))
+                        : parseFloat(formData.amount))),
+                      currencyConfig?.baseCurrency,
+                    )}
                   </span>
                 </div>
               )}
@@ -771,6 +805,50 @@ export function RecordPaymentModal({
               required
             />
           </div>
+
+          {/* Multi-currency selector (Feature 094) */}
+          {currencyConfig && currencyConfig.enabledCurrencies.length > 1 && (
+            <div className="space-y-2 rounded-lg border p-3 bg-muted/30">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Currency</Label>
+                  <Select value={selectedCurrency || currencyConfig.baseCurrency} onValueChange={(v) => { setSelectedCurrency(v); setExchangeRateOverride(''); }}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencyConfig.enabledCurrencies.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}{c === currencyConfig.baseCurrency ? ' (base)' : ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedCurrency && selectedCurrency !== currencyConfig.baseCurrency && (
+                  <div className="space-y-1">
+                    <Label className="text-xs">Rate Override (optional)</Label>
+                    <Input
+                      type="number"
+                      step="0.000001"
+                      placeholder={rateLoading ? 'Loading…' : (rateLookup?.rateToBase?.toString() ?? 'No rate')}
+                      value={exchangeRateOverride}
+                      onChange={(e) => setExchangeRateOverride(e.target.value)}
+                      disabled={rateLoading}
+                    />
+                  </div>
+                )}
+              </div>
+              {selectedCurrency && selectedCurrency !== currencyConfig.baseCurrency && baseCurrencyEquivalent !== null && (
+                <p className="text-xs text-muted-foreground">
+                  = {formatCurrency(baseCurrencyEquivalent)} {currencyConfig.baseCurrency}
+                  {rateLookup && !rateLookup.found && !exchangeRateOverride && (
+                    <span className="text-destructive"> — No exchange rate found for this date. Enter a rate or add one in Settings.</span>
+                  )}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>Date *</Label>
@@ -1073,7 +1151,18 @@ export function RecordPaymentModal({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Amount</span>
-                  <span className="font-medium">{formatCurrency(parseFloat(formData.amount || "0"))}</span>
+                  <span className="font-medium text-right">
+                    {selectedCurrency && currencyConfig && selectedCurrency !== currencyConfig.baseCurrency ? (
+                      <span className="flex flex-col items-end">
+                        <span>{formatCurrencyForCode(parseFloat(formData.amount || "0"), selectedCurrency)}</span>
+                        <span className="text-xs font-normal text-muted-foreground">
+                          ≈ {formatCurrencyForCode(baseCurrencyEquivalent, currencyConfig.baseCurrency)}
+                        </span>
+                      </span>
+                    ) : (
+                      formatCurrencyForCode(parseFloat(formData.amount || "0"), currencyConfig?.baseCurrency)
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Method</span>

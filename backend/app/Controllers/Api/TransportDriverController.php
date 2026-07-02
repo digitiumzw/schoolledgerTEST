@@ -114,6 +114,34 @@ class TransportDriverController extends BaseApiController
 
             $name  = trim($staff['first_name'] . ' ' . $staff['last_name']);
             $phone = $phone ?: ($staff['phone'] ?? null);
+
+            // Prevent duplicate driver records for the same staff member.
+            // Without this, repeated "Add Driver" calls create multiple
+            // transport_drivers rows for the same staff_id, which causes
+            // confusion in route-period assignment and the driver kiosk.
+            $existing = $this->db->table('transport_drivers')
+                ->where('staff_id', $body['staffId'])
+                ->where('tenant_id', $tenantId)
+                ->limit(1)
+                ->get()
+                ->getRowArray();
+
+            if ($existing) {
+                // Re-activate if it was inactive, then return the existing record
+                if ($existing['status'] !== 'active') {
+                    $this->db->table('transport_drivers')
+                        ->where('id', $existing['id'])
+                        ->update([
+                            'status'     => 'active',
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                }
+                return $this->success(
+                    ['id' => $existing['id']],
+                    'Driver already exists for this staff member',
+                    200
+                );
+            }
         }
 
         $id = $this->generateId('drv_');

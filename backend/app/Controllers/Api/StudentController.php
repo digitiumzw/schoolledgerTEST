@@ -2591,6 +2591,10 @@ class StudentController extends BaseApiController
                 'termName'         => $termName,
                 'description'      => $c['description'] ?? '',
                 'isOpeningBalance' => $isOpeningBalance,
+                'currencyCode'         => $c['currency_code'] ?? null,
+                'originalAmount'       => isset($c['original_amount']) ? (float) $c['original_amount'] : null,
+                'exchangeRate'         => isset($c['exchange_rate']) ? (float) $c['exchange_rate'] : null,
+                'rateManualOverride'   => isset($c['rate_manual_override']) ? (bool) $c['rate_manual_override'] : false,
             ];
         }, $displayChargeRows);
 
@@ -2603,6 +2607,10 @@ class StudentController extends BaseApiController
             'category'       => $p['category'] ?? '',
             'description'    => $p['description'] ?? '',
             'routeId'        => $p['route_id'] ?? null,
+            'currencyCode'         => $p['currency_code'] ?? null,
+            'originalAmount'       => isset($p['original_amount']) ? (float) $p['original_amount'] : null,
+            'exchangeRate'         => isset($p['exchange_rate']) ? (float) $p['exchange_rate'] : null,
+            'rateManualOverride'   => isset($p['rate_manual_override']) ? (bool) $p['rate_manual_override'] : false,
         ], $displayPayments);
 
         // ── Format adjustments for response ─────────────────────────────────
